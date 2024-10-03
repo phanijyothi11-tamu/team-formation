@@ -1,0 +1,68 @@
+<h1>Edit Form: <%= @form.name %></h1>
+
+<%# Form for editing the main form details %>
+<%= form_with(model: @form, local: true) do |form| %>
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+
+  <%= form.submit "Update Form" %>
+<% end %>
+
+<%# Display current attributes of the form %>
+<h2>Current Attributes</h2>
+<% if @form.form_attributes.any? %>
+  <ul>
+    <% @form.form_attributes.select(&:persisted?).each do |attribute| %>
+      <li>
+        <%= attribute.name %> (<%= attribute.field_type %>)
+        <% if attribute.field_type == 'scale' %>
+          (Min: <%= attribute.min_value %>, Max: <%= attribute.max_value %>)
+        <% end %>
+        <%= button_to 'Destroy Attribute', form_attribute_path(@form, attribute), method: :delete, data: { confirm: 'Are you sure you want to remove this question?'}, class: 'btn btn-danger'%>
+      </li>
+      <br>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No attributes added yet.</p>
+<% end %>
+
+<%# Form for adding a new attribute %>
+<h2>Add Attribute</h2>
+<%= form_with(model: [@form, @form.form_attributes.build], local: true) do |f| %>
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :field_type %>
+    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { onchange: 'toggleScaleFields(this.value)' } %>
+  </div>
+
+  <%# Additional fields for scale type, hidden by default %>
+  <div id="scale_fields" style="display: none;">
+    <%= f.label :min_value %>
+    <%= f.number_field :min_value %>
+
+    <%= f.label :max_value %>
+    <%= f.number_field :max_value %>
+  </div>
+
+  <%= f.submit "Save Attribute" %>
+<% end %>
+
+<%# JavaScript to toggle visibility of scale fields %>
+<script>
+function toggleScaleFields(fieldType) {
+  var scaleFields = document.getElementById('scale_fields');
+  scaleFields.style.display = fieldType === 'scale' ? 'block' : 'none';
+}
+</script>

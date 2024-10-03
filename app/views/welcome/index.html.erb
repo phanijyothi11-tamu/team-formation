@@ -117,7 +117,7 @@
     <div class="container">
         <h2 id="animatedTitle">Welcome To Team      Formation Aggies !</h2>
         
-        <%= form_tag "/auth/google_oauth2", method: :post, data: { turbo: false } do %>
+        <%= form_tag "/auth/google_oauth2", data: { turbo: false } do %>
            <%= button_tag "Login with Google", type: :submit, class: "button" %>
         <% end %>
 
