@@ -182,7 +182,8 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     json (2.7.2)
-    jwt (2.7.1)
+    jwt (2.9.3)
+      base64
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
     loofah (2.22.0)
@@ -444,7 +445,7 @@ DEPENDENCIES
   faker
   importmap-rails
   jbuilder
-  jwt (~> 2.7.1)
+  jwt (~> 2.9.3)
   omniauth (~> 2.1.1)
   omniauth-google-oauth2 (~> 1.1.1)
   omniauth-oauth2 (~> 1.8.0)
