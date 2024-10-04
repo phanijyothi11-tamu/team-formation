@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.0"
+gem "rails", "~> 7.2.1"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
@@ -38,8 +38,9 @@ gem "omniauth-rails_csrf_protection", "~> 1.0.1"
 gem "jwt", "~> 2.7.1"
 
 
-gem "devise"
-gem "roo", "~> 2.10.0"
+
+
+gem "roo"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -53,24 +54,6 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-
-  # RSpec for Rails
-  gem "rspec-rails", "~> 6.0"
-
-  # Cucumber for acceptance testing
-  gem "cucumber-rails", require: false
-
-  # Database cleaner for testing
-  gem "database_cleaner"
-
-  # SimpleCov for code coverage
-  gem "simplecov", require: false
-
-  # Factory Bot for test data
-  gem "factory_bot_rails"
-
-  # Faker for generating fake data in tests
-  gem "faker"
 end
 
 group :development do
@@ -80,13 +63,10 @@ group :development do
 end
 
 group :test do
+  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "database_cleaner-active_record"
   gem "selenium-webdriver"
-  gem "webdrivers"
-  gem "rack_session_access"
-  gem "shoulda-matchers"
-  gem "rails-controller-testing"
+  # Use sqlite3 as the database for Active Record
 end
 
 group :development, :test do
@@ -97,5 +77,3 @@ end
 group :production do
   gem "pg"
 end
-
-gem "csv"

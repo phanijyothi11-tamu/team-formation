@@ -1,22 +1,8 @@
-# This configuration file enables a comprehensive set of RuboCop cops for code style checking
+# Omakase Ruby styling for Rails
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Enable new cops by default
-AllCops:
-  NewCops: enable
-
-# Include additional cops
-require:
-  - rubocop-rails
-  - rubocop-rspec
-  - rubocop-performance
-  - rubocop-minitest
-
-# Inherit from the Rails Omakase configuration
-inherit_gem:
-  rubocop-rails-omakase: rubocop.yml
-
-# You can override specific cops if needed, for example:
-# Style/Documentation:
+# Overwrite or add rules to create your own house style
+#
+# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
+# Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
-
-# Add any project-specific overrides or configurations below

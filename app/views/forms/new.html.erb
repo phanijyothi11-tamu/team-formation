@@ -1,16 +1,12 @@
-<%# Page title %>
 <h1>New Form</h1>
 
 <%# Form for creating a new form %>
-<%# 'local: true' ensures the form submits via a full page reload, not AJAX %>
 <%= form_with(model: @form, local: true) do |form| %>
   <%# Display error messages if any %>
   <% if @form.errors.any? %>
     <div id="error_explanation">
-      <%# Pluralize is used to correctly handle singular/plural for "error" %>
       <h2><%= pluralize(@form.errors.count, "error") %> prohibited this form from being saved:</h2>
       <ul>
-        <%# Iterate over each error message and display it %>
         <% @form.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -18,27 +14,17 @@
     </div>
   <% end %>
 
-  <%# Field for form name %>
-  <div class="field">
-    <%# Label for the name field %>
+  <div>
     <%= form.label :name %>
-    <%# Text input for the name %>
     <%= form.text_field :name %>
   </div>
 
-  <%# Field for form description %>
-  <div class="field">
-    <%# Label for the description field %>
+  <div>
     <%= form.label :description %>
-    <%# Text area for the description, allowing multiple lines %>
     <%= form.text_area :description %>
   </div>
 
-  <%# Submit button for the form %>
-  <div class="actions">
-    <%= form.submit "Create Form" %>
-  </div>
+  <%= form.submit "Create Form" %>
 <% end %>
 
-<%# Link to go back to the forms index page %>
 <%= link_to 'Back', forms_path %>

@@ -1,69 +1,58 @@
-# This controller handles CRUD operations for forms
-# It also includes functionality for uploading and validating user data
-
 class FormsController < ApplicationController
   require "roo"
-
-  # Set @form instance variable for show, edit, update, and destroy actions
+  # Set up the @form instance variable for show, edit, update, and destroy actions
   before_action :set_form, only: %i[ show edit update destroy ]
 
   # GET /forms
   def index
     # TODO: Implement form listing logic
-    @forms = Form.all  # Currently fetches all forms, might need pagination or scoping
+    # @forms = Form.all
   end
 
   # GET /forms/1
-  # Displays a specific form
   def show
     # @form is already set by before_action
   end
 
   # GET /forms/new
-  # Displays the form for creating a new form
   def new
     # Initialize a new Form object for the form builder
     @form = Form.new
   end
 
   # GET /forms/1/edit
-  # Displays the form for editing an existing form
   def edit
-    # Build a new attribute for the form
-    # This allows adding new attributes in the edit view
+    # @form is already set by before_action
+    # Build a new attribute for the nested form
     @attribute = @form.form_attributes.build
   end
 
   # POST /forms
-  # Creates a new form
   def create
-    # Build a new form associated with the current user
-    @form = current_user.forms.build(form_params)
+    # Create a new Form with the submitted parameters
+    @form = Form.new(form_params)
 
     if @form.save
       # Redirect to edit page to add attributes after successful creation
       redirect_to edit_form_path(@form), notice: "Form was successfully created. You can now add attributes."
     else
-      # If save fails, set error message and re-render the new form
-      flash.now[:alert] = @form.errors.full_messages.to_sentence
+      # Re-render the new form if save fails
       render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /forms/1
-  # Updates an existing form
   def update
-    # Allow params with or without 'form' key
-    update_params = params[:form] || params
-
-    if @form.update(update_params.permit(:name, :description))
-      # If update succeeds, set success message and redirect to the form
-      flash[:notice] = "Form was successfully updated."
-      redirect_to @form
-    else
-      # If update fails, rebuild the attribute and re-render the edit form
-      @attribute = @form.form_attributes.build
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @form.update(form_params)
+        # Redirect to show page after successful update
+        format.html { redirect_to @form, notice: "Form was successfully updated." }
+        format.json { render :show, status: :ok, location: @form }
+      else
+        # Re-render the edit form if update fails
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @form.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -77,6 +66,7 @@ class FormsController < ApplicationController
       begin
         spreadsheet = Roo::Spreadsheet.open(file)
         header_row = spreadsheet.row(1)
+        puts "First row content: #{header_row.inspect}"
 
         if header_row.nil? || header_row.all?(&:blank?)
           flash[:alert] = "The first row is empty. Please provide column names."
@@ -143,31 +133,24 @@ class FormsController < ApplicationController
 
 
   # DELETE /forms/1
-  # Deletes a specific form
   def destroy
     @form.destroy!
 
     respond_to do |format|
-      # Redirect to user's show page after successful deletion
-      format.html { redirect_to user_path(current_user), status: :see_other, notice: "Form was successfully destroyed." }
+      # Redirect to index page after successful deletion
+      format.html { redirect_to forms_path, status: :see_other, notice: "Form was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Sets @form instance variable based on the id parameter
-    # Only finds forms belonging to the current user for security
+    # Fetch the Form object based on the id parameter
     def set_form
-      @form = current_user.forms.find(params[:id])
+      @form = Form.find(params[:id])
     end
 
     # Define allowed parameters for form creation and update
-    # This is a security measure to prevent mass assignment vulnerabilities
     def form_params
       params.require(:form).permit(:name, :description)
-    rescue ActionController::ParameterMissing
-      # If :form key is missing, permit name and description directly from params
-      # This allows for more flexible parameter handling
-      params.permit(:name, :description)
     end
 end

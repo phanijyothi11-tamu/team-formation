@@ -1,51 +1,18 @@
-<h1>Editing Form</h1>
-
-<%# Display success messages from flash, if any %>
-<% if flash[:notice] %>
-  <div class="alert alert-success"><%= flash[:notice] %></div>
-<% end %>
-
-<%# Display form errors at the top of the page %>
-<% if @form.errors.any? %>
-  <%# Container for the entire error message block %>
-  <div class="error-container">
-    <%# Icon container for visual emphasis %>
-    <div class="error-icon">
-      <%# Font Awesome exclamation circle icon %>
-      <i class="fas fa-exclamation-circle"></i>
-    </div>
-    <%# Container for error messages %>
-    <div class="error-message">
-      <%# Friendly heading for error messages %>
-      <h4>Oops! Please correct the following:</h4>
-      <%# Unordered list of error messages %>
-      <ul>
-        <%# Iterate through each error message %>
-        <% @form.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-<% end %>
+<h1>Edit Form: <%= @form.name %></h1>
 
 <%# Form for editing the main form details %>
-<%= form_with(model: @form, local: true, data: { turbo: false }) do |form| %>
+<%= form_with(model: @form, local: true) do |form| %>
   <div>
     <%= form.label :name %>
-    <%= form.text_field :name, class: 'form-control' %>
+    <%= form.text_field :name %>
   </div>
 
   <div>
     <%= form.label :description %>
-    <%= form.text_area :description, class: 'form-control' %>
+    <%= form.text_area :description %>
   </div>
 
-  <%# Action buttons %>
-  <div class="d-flex justify-content-between align-items-center">
-    <%= link_to "Back to Forms", user_path(current_user), class: "btn btn-secondary" %>
-    <%= form.submit "Save Form", class: "btn btn-primary" %>
-  </div>
+  <%= form.submit "Update Form" %>
 <% end %>
 
 <%# Display current attributes of the form %>
@@ -71,38 +38,31 @@
 <h2>Add Attribute</h2>
 <%= form_with(model: [@form, @form.form_attributes.build], local: true) do |f| %>
   <div>
-    <%= f.label :name, "Attribute Name" %>
-    <%= f.text_field :name, id: "attribute_name" %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
   </div>
 
   <div>
-    <%= f.label :field_type, "Attribute Type" %>
-    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { id: "attribute_type", onchange: 'toggleScaleFields(this.value)' } %>
+    <%= f.label :field_type %>
+    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { onchange: 'toggleScaleFields(this.value)' } %>
   </div>
 
-  <%# Additional fields for scale type %>
-  <div id="scale_fields" style="display: block;">
-    <%= f.label :min_value, "Minimum Value" %>
-    <%= f.number_field :min_value, id: "attribute_min_value" %>
+  <%# Additional fields for scale type, hidden by default %>
+  <div id="scale_fields" style="display: none;">
+    <%= f.label :min_value %>
+    <%= f.number_field :min_value %>
 
-    <%= f.label :max_value, "Maximum Value" %>
-    <%= f.number_field :max_value, id: "attribute_max_value" %>
+    <%= f.label :max_value %>
+    <%= f.number_field :max_value %>
   </div>
 
-  <%= f.submit "Save Attribute", id: "save_attribute" %>
+  <%= f.submit "Save Attribute" %>
 <% end %>
 
-<%# Add spacing between "Save Attribute" and action buttons %>
-<div style="margin-top: 30px;"></div>
-
-<% unless Rails.env.test? %>
-  <script>
-    function toggleScaleFields(fieldType) {
-      var scaleFields = document.getElementById('scale_fields');
-      scaleFields.style.display = fieldType === 'scale' ? 'block' : 'none';
-    }
-
-    // Initialize the visibility
-    toggleScaleFields(document.getElementById('attribute_type').value);
-  </script>
-<% end %>
+<%# JavaScript to toggle visibility of scale fields %>
+<script>
+function toggleScaleFields(fieldType) {
+  var scaleFields = document.getElementById('scale_fields');
+  scaleFields.style.display = fieldType === 'scale' ? 'block' : 'none';
+}
+</script>

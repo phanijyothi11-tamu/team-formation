@@ -13,35 +13,3 @@
  *= require_tree .
  *= require_self
  */
-
-.error-container {
-  background-color: #fff3f3;
-  border: 1px solid #ffcccb;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: flex-start;
-}
-
-.error-icon {
-  font-size: 24px;
-  color: #dc3545;
-  margin-right: 15px;
-}
-
-.error-message h4 {
-  color: #dc3545;
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
-.error-message ul {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.error-message li {
-  color: #dc3545;
-  margin-bottom: 5px;
-}
