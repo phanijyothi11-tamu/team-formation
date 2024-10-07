@@ -59,7 +59,7 @@ group :development, :test do
   gem "rubocop-rspec", require: false
 
   # RSpec for Rails
-  gem "rspec-rails", "~> 6.0"
+  gem "rspec-rails", "~> 7.0"
 
   # Cucumber for acceptance testing
   gem "cucumber-rails", require: false
