@@ -174,8 +174,8 @@ class FormsController < ApplicationController
       handle_publish_error
     end
   end
-  
-  
+
+
   private
     def publish_form
       if @form.update(published: true)
@@ -184,20 +184,20 @@ class FormsController < ApplicationController
         redirect_to @form, alert: "Failed to publish the form."
       end
     end
-  
+
     def handle_publish_error
       reasons = collect_error_reasons
       flash[:alert] = "Form cannot be published. Reasons: #{reasons.join(', ')}."
       redirect_to @form
     end
-  
+
     def collect_error_reasons
       reasons = []
       reasons << "no attributes" unless @form.has_attributes?
       reasons << "no associated students" unless @form.has_associated_students?
       reasons
     end
-    
+
     # Sets @form instance variable based on the id parameter
     # Only finds forms belonging to the current user for security
     def set_form
@@ -264,3 +264,122 @@ class FormsController < ApplicationController
       team_distribution
     end
 end
+
+
+    def populate_teams_based_on_gender(team_distribution)
+      # Iterate over each section in the team distribution hash
+      team_distribution.each do |section, details|
+        # Get the number of teams of 4 and teams of 3 for the section
+        teams_of_4 = details[:teams_of_4]
+        teams_of_3 = details[:teams_of_3]
+        total_teams = details[:total_teams]
+
+        # Create empty teams based on the number of teams of 4 and 3 #change 1
+        teams = Array.new(teams_of_4) { [] } + Array.new(teams_of_3) { [] }
+
+        # Get form responses and initialize lists for all gender categories
+        responses = details[:form_responses]
+        female_students = []
+        other_students = []
+        male_students = []
+        prefer_not_to_say_students = []
+
+        # Identify the gender attribute (dynamic, based on professor input)
+        gender_attribute = find_gender_attribute(details[:form])
+
+        # Categorize students by their gender and calculate their weighted average score
+        responses.each do |response|
+          student = response.student
+          gender_value = response.responses[gender_attribute.id]
+          weighted_average = calculate_weighted_average(response)
+
+          case gender_value.downcase
+          when "female"
+            female_students << { student: student, score: weighted_average }
+          when "other"
+            other_students << { student: student, score: weighted_average }
+          when "male"
+            male_students << { student: student, score: weighted_average }
+          when "prefer not to say"
+            prefer_not_to_say_students << { student: student, score: weighted_average }
+          end
+        end
+
+        # Sort the female and other students by their weighted average scores (descending)
+        female_students.sort_by! { |s| -s[:score] }
+        other_students.sort_by! { |s| -s[:score] }
+
+        # Initialize pointers and team index
+        i = 0
+        j = female_students.size - 1
+        team_index = 0
+
+        # Assign females to teams based on the specified conditions
+        while i <= j && team_index < teams.size
+          remaining_females = j - i + 1
+
+          if remaining_females == 3
+            # Assign the last 3 females to one team
+            teams[team_index] << female_students[i][:student]
+            i += 1
+            teams[team_index] << female_students[i][:student]
+            i += 1
+            teams[team_index] << female_students[i][:student]
+            i += 1
+            team_index += 1
+            break
+          elsif remaining_females >= 2
+            # Assign 2 females to the team
+            teams[team_index] << female_students[i][:student]  # High scorer
+            i += 1
+            teams[team_index] << female_students[j][:student]  # Low scorer
+            j -= 1
+            team_index += 1
+          end
+        end
+
+        # Assign one "other" student to each team with 2 or 3 females
+        teams.each do |team|
+          break if other_students.empty? # Stop if no "other" students left
+          if team.size >= 2 && team.size<4 # Ensure teams with 2 or 3 females get an "other" student
+            team << other_students.shift[:student]
+          end
+        end
+
+        # Store the final teams and the remaining students for this section
+        details[:teams] = teams
+        details[:form_responses] = form_responses
+
+        # Update the section in the team_distribution
+        team_distribution[section] = details
+        end
+
+        # Return the updated team distribution hash
+        team_distribution
+    end
+
+
+    # Helper method to identify the gender attribute from the form's attributes
+    def find_gender_attribute(form)
+      form.form_attributes.find { |attr| attr.name.downcase == "gender" }
+    end
+
+
+    # Helper method to calculate the weighted average score for a student
+    def calculate_weighted_average(response)
+      attributes = response.form.form_attributes.reject { |attr| attr.name.downcase.in?([ "gender", "ethnicity" ]) }
+      total_score = 0.0
+      total_weight = 0.0
+
+      attributes.each do |attribute|
+        weightage = attribute.weightage || 1.0 # Default weightage to 1 if not set
+        student_response = response.responses[attribute.id]
+        score = student_response.to_f
+
+        total_score += score * weightage
+        total_weight += weightage
+      end
+
+      # Return the weighted average score
+      total_weight
+    end

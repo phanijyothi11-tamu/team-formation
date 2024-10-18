@@ -1,7 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/Users/udayreddy/team-formation/app/helpers/application_helper.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/helpers/application_helper.rb": {
         "lines": [
           1,
           1,
@@ -15,13 +15,13 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/helpers/attributes_helper.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/helpers/attributes_helper.rb": {
         "lines": [
           1,
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/helpers/forms_helper.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/helpers/forms_helper.rb": {
         "lines": [
           1,
           1,
@@ -88,13 +88,13 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/helpers/welcome_helper.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/helpers/welcome_helper.rb": {
         "lines": [
           1,
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/application_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -130,7 +130,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/attributes_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -266,7 +266,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/form_responses_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -373,7 +373,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/forms_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -640,10 +640,134 @@
           null,
           6,
           null,
+          null,
+          null,
+          null,
+          1,
+          null,
+          7,
+          null,
+          7,
+          7,
+          7,
+          null,
+          null,
+          28,
+          null,
+          null,
+          7,
+          7,
+          7,
+          7,
+          7,
+          null,
+          null,
+          7,
+          null,
+          null,
+          7,
+          77,
+          77,
+          77,
+          null,
+          77,
+          null,
+          35,
+          null,
+          21,
+          null,
+          21,
+          null,
+          0,
+          null,
+          null,
+          null,
+          null,
+          42,
+          28,
+          null,
+          null,
+          7,
+          7,
+          7,
+          7,
+          null,
+          7,
+          21,
+          null,
+          21,
+          null,
+          null,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          null,
+          null,
+          14,
+          14,
+          14,
+          14,
+          14,
+          null,
+          null,
+          null,
+          null,
+          7,
+          null,
+          null,
+          7,
+          21,
+          21,
+          21,
+          null,
+          null,
+          null,
+          null,
+          7,
+          7,
+          7,
+          28,
+          7,
+          null,
+          null,
+          7,
+          null,
+          null,
+          null,
+          7,
+          null,
+          null,
+          null,
+          null,
+          1,
+          16,
+          null,
+          null,
+          null,
+          null,
+          1,
+          390,
+          78,
+          78,
+          null,
+          78,
+          234,
+          234,
+          234,
+          null,
+          234,
+          234,
+          null,
+          null,
+          null,
+          78,
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/sessions_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -671,7 +795,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/users_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -687,7 +811,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/controllers/welcome_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -702,7 +826,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/attribute.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -760,14 +884,14 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/application_record.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/form.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -827,7 +951,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/user.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -835,7 +959,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/student.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -847,7 +971,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/models/form_response.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/models/form_response.rb": {
         "lines": [
           1,
           1,
@@ -861,7 +985,7 @@
           null
         ]
       },
-      "/Users/udayreddy/team-formation/app/channels/application_cable/channel.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/channels/application_cable/channel.rb": {
         "lines": [
           0,
           0,
@@ -871,7 +995,7 @@
         "branches": {
         }
       },
-      "/Users/udayreddy/team-formation/app/channels/application_cable/connection.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/channels/application_cable/connection.rb": {
         "lines": [
           0,
           0,
@@ -881,7 +1005,7 @@
         "branches": {
         }
       },
-      "/Users/udayreddy/team-formation/app/controllers/students_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/controllers/students_controller.rb": {
         "lines": [
           0,
           0,
@@ -928,7 +1052,7 @@
         "branches": {
         }
       },
-      "/Users/udayreddy/team-formation/app/jobs/application_job.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/jobs/application_job.rb": {
         "lines": [
           0,
           null,
@@ -941,7 +1065,7 @@
         "branches": {
         }
       },
-      "/Users/udayreddy/team-formation/app/mailers/application_mailer.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/team-formation/app/mailers/application_mailer.rb": {
         "lines": [
           0,
           0,
@@ -952,6 +1076,6 @@
         }
       }
     },
-    "timestamp": 1729148614
+    "timestamp": 1729209377
   }
 }
