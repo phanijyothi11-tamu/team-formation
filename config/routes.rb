@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       get "duplicate"
       patch "update_deadline"
       post "publish"
+      post "close"
     end
     resources :attributes do
       member do

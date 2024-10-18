@@ -1,0 +1,26 @@
+<h1>Student Information</h1>
+
+<div class="student-info">
+  <p><strong>Name:</strong> <%= @student.name %></p>
+  <p><strong>UIN:</strong> <%= @student.uin %></p>
+  <p><strong>Email:</strong> <%= @student.email %></p>
+  <p><strong>Section:</strong> <%= @student.section %></p>
+</div>
+
+<h2>Available Forms</h2>
+
+<% if @published_forms.any? %>
+  <ul class="forms-list">
+    <% @published_forms.each do |form| %>
+      <% form_response = @form_responses.find { |fr| fr.form_id == form.id } %>
+      <li>
+        <h3><%= form.name %></h3>
+        <p><%= form.description %></p>
+        <p><strong>Deadline:</strong> <%= form.deadline ? form.deadline.strftime("%B %d, %Y at %I:%M %p") : "No deadline set" %></p>
+        <%= link_to "View/Respond to Form", edit_form_response_path(form_response), class: "btn btn-primary" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No forms available at this time.</p>
+<% end %>

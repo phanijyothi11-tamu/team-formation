@@ -546,6 +546,48 @@ RSpec.describe FormsController, type: :controller do
       end
     end
   end
+
+  describe 'POST #close' do
+    let(:published_form) { create(:form, user: user, published: true) }
+
+    context 'when the form is successfully closed' do
+      it 'updates the form to unpublished' do
+        post :close, params: { id: published_form.id }
+        expect(published_form.reload.published).to be false
+      end
+
+      it 'redirects to the form page' do
+        post :close, params: { id: published_form.id }
+        expect(response).to redirect_to(published_form)
+      end
+
+      it 'sets a success notice' do
+        post :close, params: { id: published_form.id }
+        expect(flash[:notice]).to eq('Form was successfully closed.')
+      end
+    end
+
+    context 'when the form fails to close' do
+      before do
+        allow_any_instance_of(Form).to receive(:update).and_return(false)
+      end
+
+      it 'does not update the form' do
+        post :close, params: { id: published_form.id }
+        expect(published_form.reload.published).to be true
+      end
+
+      it 'redirects to the form page' do
+        post :close, params: { id: published_form.id }
+        expect(response).to redirect_to(published_form)
+      end
+
+      it 'sets an alert message' do
+        post :close, params: { id: published_form.id }
+        expect(flash[:alert]).to eq('Failed to close the form.')
+      end
+    end
+  end
 end
 
 

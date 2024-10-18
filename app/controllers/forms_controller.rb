@@ -6,7 +6,7 @@ class FormsController < ApplicationController
   require "roo"
 
   # Set @form instance variable for show, edit, update, and destroy actions
-  before_action :set_form, only: %i[ show edit update destroy update_deadline publish ]
+  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close ]
 
   # GET /forms
   def index
@@ -175,6 +175,16 @@ class FormsController < ApplicationController
     end
   end
 
+  # POST /forms/1/close
+  def close
+    if @form.update(published: false)
+      redirect_to @form, notice: "Form was successfully closed."
+    else
+      redirect_to @form, alert: "Failed to close the form."
+    end
+  end
+
+
 
   private
     def publish_form
@@ -185,11 +195,13 @@ class FormsController < ApplicationController
       end
     end
 
+
     def handle_publish_error
       reasons = collect_error_reasons
       flash[:alert] = "Form cannot be published. Reasons: #{reasons.join(', ')}."
       redirect_to @form
     end
+
 
     def collect_error_reasons
       reasons = []
@@ -197,6 +209,7 @@ class FormsController < ApplicationController
       reasons << "no associated students" unless @form.has_associated_students?
       reasons
     end
+
 
     # Sets @form instance variable based on the id parameter
     # Only finds forms belonging to the current user for security
