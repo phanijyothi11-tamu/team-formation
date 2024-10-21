@@ -282,4 +282,81 @@ class FormsController < ApplicationController
       # This hash contains the team distribution data for all sections
       team_distribution
     end
+
+    def analyze_teams(teams, form_responses)
+      teams.map do |team|
+        team.map do |student|
+          response = form_responses.find { |r| r.student_id == student.id }
+          next if response.nil?
+    
+          form = Form.find(response.form_id)
+          responses = JSON.parse(response.responses)
+    
+          ethnicity_attr_id = form.form_attributes.find_by(name: 'ethnicity')&.id
+          gender_attr_id = form.form_attributes.find_by(name: 'gender')&.id
+    
+          {
+            student: student,
+            ethnicity: responses[ethnicity_attr_id.to_s]&.to_s&.downcase,
+            gender: responses[gender_attr_id.to_s]&.to_s&.downcase,
+            score: calculate_weighted_average(response, form)
+          }
+        end.compact
+      end
+    end
+
+    def distribute_remaining_students(team_distribution)
+      team_distribution.each do |section, details|
+        teams = details[:teams]
+        form_responses = details[:form_responses]
+        
+        # Analyze current teams
+        analyzed_teams = analyze_teams(teams, form_responses)
+        
+        # Find unallocated students
+        allocated_students = teams.flatten
+        unallocated_responses = form_responses.reject { |r| allocated_students.include?(r.student) }
+        
+        # Analyze unallocated students
+        unallocated_students = analyze_teams([unallocated_responses.map(&:student)], form_responses).first
+        
+        # Sort unallocated students by their programming proficiency score
+        unallocated_students.sort_by! { |s| -s[:score] }
+        
+        # Calculate current team scores
+        team_scores = analyzed_teams.map { |team| calculate_team_score(team) }
+        
+        # Distribute remaining students
+        unallocated_students.each do |student_data|
+          # Find the team with the lowest score that isn't full
+          target_team_index = team_scores.each_with_index
+                                         .reject { |score, i| analyzed_teams[i].size >= 4 }
+                                         .min_by { |score, _| score }
+                                         &.last
+          
+          if target_team_index.nil?
+            # All teams are full, create a new team
+            teams << [student_data[:student]]
+            analyzed_teams << [student_data]
+            team_scores << student_data[:score]
+          else
+            # Add student to the target team
+            teams[target_team_index] << student_data[:student]
+            analyzed_teams[target_team_index] << student_data
+            team_scores[target_team_index] = calculate_team_score(analyzed_teams[target_team_index])
+          end
+        end
+        
+        # Update the teams in the details hash
+        details[:teams] = teams
+      end
+    
+      team_distribution
+    end
+    
+    def calculate_team_score(team)
+      return 0 if team.empty?
+      team.sum { |s| s[:score] } / team.size
+    end
+
 end
