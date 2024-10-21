@@ -282,4 +282,189 @@ class FormsController < ApplicationController
       # This hash contains the team distribution data for all sections
       team_distribution
     end
+
+    def optimize_teams_based_on_ethnicity(team_distribution)
+      team_distribution.each do |section, details|
+        teams = details[:teams]
+        form_responses = details[:form_responses]
+
+        # Phase 1: Analyze and optimize existing teams through swaps
+        team_compositions = analyze_teams(teams, form_responses)
+        perform_minority_swaps(teams, team_compositions, form_responses)
+
+        # Phase 2: Add new minority students to balance teams
+        add_remaining_minorities(teams, form_responses)
+
+        # Update the details with the modified teams
+        details[:teams] = teams
+        team_distribution[section] = details
+      end
+
+      team_distribution
+    end
+
+    # Helper method to analyze current team composition
+    def analyze_teams(teams, form_responses)
+      teams.map do |team|
+        team.map do |student|
+          response = form_responses.find { |r| r.student == student }
+          {
+            student: student,
+            ethnicity: response.responses["ethnicity"].to_s.downcase,
+            gender: response.responses["gender"].to_s.downcase,
+            score: calculate_weighted_average(response)
+          }
+        end
+      end
+    end
+
+    # Phase 1: Perform swaps to group minorities
+    def perform_minority_swaps(teams, team_compositions, form_responses)
+      minority_types = [ "black", "asian", "hispanic" ]
+
+      minority_types.each do |ethnicity|
+        # Find all teams with single minority students of this ethnicity
+        single_minority_teams = []
+        team_compositions.each_with_index do |team_comp, team_index|
+          minority_count = team_comp.count { |s| s[:ethnicity].include?(ethnicity) }
+          if minority_count == 1
+            single_minority_teams << {
+              index: team_index,
+              student: team_comp.find { |s| s[:ethnicity].include?(ethnicity) },
+              team_score: team_comp.sum { |s| s[:score] } / team_comp.length
+            }
+          end
+        end
+
+        # Try to pair single minorities through swaps
+        while single_minority_teams.length >= 2
+          team1_data = single_minority_teams.shift
+          team2_data = single_minority_teams.shift
+
+          team1_index = team1_data[:index]
+          team2_index = team2_data[:index]
+
+          # Check if swap would maintain gender balance
+          if can_swap_students?(teams[team1_index], teams[team2_index],
+                              team1_data[:student][:student],
+                              team2_data[:student][:student],
+                              form_responses)
+            # Perform the swap
+            swap_students(teams[team1_index], teams[team2_index],
+                         team1_data[:student][:student],
+                         team2_data[:student][:student])
+          end
+        end
+      end
+    end
+
+    # Phase 2: Add remaining minorities to teams
+    def add_remaining_minorities(teams, form_responses)
+      # Categorize unassigned minority students
+      unassigned_minorities = categorize_unassigned_minorities(teams, form_responses)
+
+      # Get current team compositions after swaps
+      team_compositions = analyze_teams(teams, form_responses)
+
+      teams.each_with_index do |team, team_index|
+        next if team.size >= 4
+
+        current_team_data = team_compositions[team_index]
+        team_avg_score = current_team_data.sum { |s| s[:score] } / current_team_data.length
+
+        # Check existing minority representation
+        existing_minorities = current_team_data.select { |s|
+          s[:ethnicity].match?(/black|asian|hispanic/)
+        }
+
+        if existing_minorities.any?
+          # Try to add same ethnicity minority with complementary score
+          existing_type = existing_minorities.first[:ethnicity].match(/black|asian|hispanic/)[0]
+
+          if unassigned_minorities[existing_type].any?
+            best_match = find_best_score_match(unassigned_minorities[existing_type], team_avg_score)
+            if best_match
+              team << best_match[:student]
+              unassigned_minorities[existing_type].delete(best_match)
+            end
+          end
+        else
+          # Add highest scoring available minority to team without minorities
+          unassigned_minorities.each do |type, students|
+            next if students.empty?
+            best_match = find_best_score_match(students, team_avg_score)
+            if best_match
+              team << best_match[:student]
+              students.delete(best_match)
+              break
+            end
+          end
+        end
+      end
+    end
+
+    # Helper method to check if students can be swapped while maintaining gender balance
+    def can_swap_students?(team1, team2, student1, student2, form_responses)
+      get_gender = ->(student) {
+        response = form_responses.find { |r| r.student == student }
+        response.responses["gender"].to_s.downcase
+      }
+
+      student1_gender = get_gender.call(student1)
+      student2_gender = get_gender.call(student2)
+
+      # Only allow swap if both students are of the same gender
+      # or if swap won't disrupt gender balance
+      student1_gender == student2_gender
+    end
+
+    # Helper method to perform the actual swap
+    def swap_students(team1, team2, student1, student2)
+      team1.delete(student1)
+      team2.delete(student2)
+      team1 << student2
+      team2 << student1
+    end
+
+    # Helper method to categorize unassigned minority students
+    def categorize_unassigned_minorities(teams, form_responses)
+      assigned_students = teams.flatten
+
+      minorities = {
+        "black" => [],
+        "asian" => [],
+        "hispanic" => [],
+        "mixed" => []
+      }
+
+      form_responses.each do |response|
+        next if assigned_students.include?(response.student)
+
+        ethnicity = response.responses["ethnicity"].to_s.downcase
+        score = calculate_weighted_average(response)
+        student_data = { student: response.student, score: score }
+
+        case ethnicity
+        when /black/
+          minorities["black"] << student_data
+        when /asian/
+          minorities["asian"] << student_data
+        when /hispanic/, /latino/
+          minorities["hispanic"] << student_data
+        when /mixed/, /other/
+          minorities["mixed"] << student_data
+        end
+      end
+
+      minorities.each_value { |group| group.sort_by! { |s| -s[:score] } }
+      minorities
+    end
+
+    # Helper method to find best scoring match for a team
+    def find_best_score_match(students, team_avg_score)
+      return nil if students.empty?
+
+      # Find student with score that best balances the team
+      students.min_by { |student| (student[:score] - team_avg_score).abs }
+    end
 end
