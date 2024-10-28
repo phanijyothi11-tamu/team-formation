@@ -27,6 +27,7 @@ class FormResponsesController < ApplicationController
   # GET /form_responses/:id
   def show
     # @form_response is set by set_form_response before_action
+    @form_response = FormResponse.find(params[:id])
   end
 
   # GET /forms/:form_id/students/:student_id/form_responses/new

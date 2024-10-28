@@ -1,6 +1,6 @@
 <%= render @form %>
 
-<% @form.form_attributes.each do |attribute| %>  <!-- Use the correct association here -->
+<% @form.form_attributes.each do |attribute| %>
   <div class="form-group">
     <!-- Display the attribute label -->
     <label for="<%= attribute.name %>"><%= attribute.name %></label>
@@ -8,7 +8,7 @@
     <!-- Display appropriate field types dynamically -->
     <% case attribute.field_type %>
     <% when 'text_input' %>
-      <input type="text" class="form-control" id="<%= attribute.name %>" placeholder="Enter text here" value="<%= attribute.default_value %>">
+      <input type="text" class="form-control" id="<%= attribute.name %>" placeholder="Enter text here">
 
     <% when 'mcq' %>
       <select class="form-control" id="<%= attribute.name %>">

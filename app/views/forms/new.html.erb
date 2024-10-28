@@ -41,4 +41,4 @@
 <% end %>
 
 <%# Link to go back to the forms index page %>
-<%= link_to 'Back', forms_path %>
+<%= button_to "Back", user_path(current_user), method: :get, class: "btn btn-secondary me-2" %>

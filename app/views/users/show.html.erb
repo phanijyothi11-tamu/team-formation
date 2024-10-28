@@ -27,6 +27,7 @@
               <%= link_to "View", form_path(form), class: "btn btn-info action-btn" %>
               <%= link_to "Edit", edit_form_path(form), class: "btn btn-warning action-btn" %>
               <%= link_to "Delete", form_path(form), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger action-btn" %>
+              <%= link_to "View Responses", form_form_responses_path(form), class: "btn btn-sm btn-info" %>
               <button type="button" class="btn btn-info action-btn" onclick="toggleDeadlinePicker(<%= form.id %>)">Update Deadline</button>
               <div id="deadline-picker-<%= form.id %>" class="deadlinepicker" style="display:block;">
                 <%= form_with model: form, url: update_deadline_form_path(form), method: :patch, local: true do |f| %>

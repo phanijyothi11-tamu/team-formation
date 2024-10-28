@@ -1,0 +1,60 @@
+<h1>Responses for <%= @form.name %></h1>
+
+<% if @form_responses.any? %>
+  <table class="table table-bordered table-hover form-responses-table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Student ID</th>
+        <th scope="col">Submitted At</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @form_responses.each_with_index do |response, index| %>
+        <tr class="<%= 'alt-row' if index.odd? %>">
+          <td><%= response.student_id %></td>
+          <td><%= response.created_at.strftime("%B %d, %Y %H:%M") %></td>
+          <td>
+            <%= link_to "View Details", form_response_path(response), class: "btn btn-sm btn-info action-button" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-warning" role="alert">
+    No responses found for this form.
+  </div>
+<% end %>
+
+<%= button_to "Back to Forms", user_path(current_user), method: :get, class: "btn btn-secondary me-2" %>
+
+<style>
+/* Custom styling for the form responses table */
+.form-responses-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.form-responses-table th,
+.form-responses-table td {
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.form-responses-table .thead-dark th {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+.form-responses-table .alt-row {
+  background-color: #f9f9f9;
+}
+
+.action-button {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+</style>

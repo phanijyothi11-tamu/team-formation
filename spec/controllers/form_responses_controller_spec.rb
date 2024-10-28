@@ -91,4 +91,23 @@ RSpec.describe FormResponsesController, type: :controller do
       expect(response).to redirect_to(form_responses_url)
     end
   end
+
+  describe 'GET #show' do
+    let(:form_response) { create(:form_response) }
+
+    it 'assigns the requested form_response to @form_response' do
+      get :show, params: { id: form_response.id }
+      expect(assigns(:form_response)).to eq(form_response)
+    end
+
+    it 'renders the show template' do
+      get :show, params: { id: form_response.id }
+      expect(response).to render_template(:show)
+    end
+
+    it 'returns a success response' do
+      get :show, params: { id: form_response.id }
+      expect(response).to have_http_status(:success)
+    end
+  end
 end
