@@ -617,13 +617,6 @@ RSpec.describe FormsController, type: :controller do
       create_responses("B", { "female" => 5, "male" => 3, "other" => 2, "prefer not to say" => 1 })
     end
 
-    before do
-      puts "Form Responses:"
-      form.form_responses.each do |response|
-        puts "Response ID: #{response.id}, Student ID: #{response.student_id}, Responses: #{response.responses.inspect}"
-      end
-    end
-
     it 'distributes students into teams based on gender correctly' do
       # Initial team distribution setup
       team_distribution = {
