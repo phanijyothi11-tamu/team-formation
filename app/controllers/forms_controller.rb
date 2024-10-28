@@ -308,13 +308,12 @@ end
       
       form = Form.find(responses.first.form_id)
 
-      # Find the attribute with the name "gender"
       gender_attribute = form.form_attributes.find { |attr| attr.name.downcase == "gender" }
 
       # Categorize students by their gender and calculate their weighted average score
       responses.each do |response|
         student = response.student
-        gender_value = response.responses[gender_attribute.id]
+        gender_value = response.responses[gender_attribute.id.to_s]
         # Skip if gender_value is nil or empty
         next if gender_value.nil? || gender_value.strip.empty?
         weighted_average = calculate_weighted_average(response)
