@@ -8,6 +8,6 @@ class CreateStudents < ActiveRecord::Migration[7.2]
 
       t.timestamps
     end
-    add_index :students, :uin
+    add_index :students, :uin, unique: true
   end
 end

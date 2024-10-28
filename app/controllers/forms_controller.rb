@@ -100,6 +100,7 @@ class FormsController < ApplicationController
 
 
   def upload
+    @form = Form.find(params[:id])
   end
 
   def validate_upload
@@ -112,7 +113,7 @@ class FormsController < ApplicationController
 
         if header_row.nil? || header_row.all?(&:blank?)
           flash[:alert] = "The first row is empty. Please provide column names."
-          redirect_to user_path(current_user) and return
+          redirect_to edit_form_path(params[:id]) and return
         end
 
         users_to_create = []
@@ -120,12 +121,22 @@ class FormsController < ApplicationController
           row = spreadsheet.row(index)
 
           user_data = validate_row(row, index, header_row)
-          return redirect_to user_path(current_user) if user_data.nil?
+          return redirect_to edit_form_path(params[:id]) if user_data.nil?
 
           users_to_create << user_data
         end
 
-        User.insert_all(users_to_create)
+        Student.upsert_all(users_to_create, unique_by: :uin)
+        student_ids = users_to_create.map { |student| Student.find_by(uin: student[:uin])&.id }.compact
+        existing_student_ids = FormResponse.where(form_id: params[:id]).pluck(:student_id)
+        form_responses_to_create = student_ids.reject { |id| existing_student_ids.include?(id) }.map do |student_id|
+          {
+            student_id: student_id,
+            form_id: params[:id],
+            responses: {}.to_json
+          }
+        end
+        FormResponse.insert_all(form_responses_to_create) if form_responses_to_create.any?
         flash[:notice] = "All validations passed."
       rescue StandardError => e
         flash[:alert] = "An error occurred: #{e.message}"
@@ -134,7 +145,7 @@ class FormsController < ApplicationController
       flash[:alert] = "Please upload a file."
     end
 
-    redirect_to user_path(current_user)
+    redirect_to edit_form_path(params[:id])
   end
 
 

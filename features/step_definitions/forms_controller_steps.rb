@@ -1,12 +1,14 @@
-Given("I am logged in as a valid user") do
+Given("I am logged in as a valid user with a form created") do
   # Create a new user in the database
   @user = User.create!(name: "Professor", email: "professor@example.com", uin: "123456789")
+  # Create a new form in the database
+  @form = Form.create!(name: "My Form", description: "This is my form", user_id: @user.id)
   # Simulate a logged-in session for this user
   page.set_rack_session(user_id: @user.id)
 end
 
 Given("I am on the upload page") do
-  visit upload_path
+  visit upload_form_path(@form)
 end
 
 When("I submit the upload form without a file") do
@@ -53,5 +55,5 @@ When("I have uploaded a valid file") do
 end
 
 Then("I should be redirected to my user profile page") do
-  expect(page.current_path).to eq(user_path(@user))
+  expect(page.current_path).to eq(edit_form_path(@form))
 end

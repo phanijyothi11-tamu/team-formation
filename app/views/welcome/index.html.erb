@@ -114,6 +114,14 @@
     </style>
 </head>
 <body>
+    <div id="flash" style="margin-top:-10px">
+    <% if flash[:alert] %>
+        <p style="color: red;"><%= flash[:alert] %></p>
+    <% end %>
+    <% if flash[:notice] %>
+        <p style="color: green;"><%= flash[:notice] %></p>
+    <% end %>
+    </div>
     <div class="container">
         <h2 id="animatedTitle">Welcome To Team      Formation Aggies !</h2>
         

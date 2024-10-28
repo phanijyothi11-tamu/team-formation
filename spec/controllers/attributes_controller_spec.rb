@@ -20,20 +20,28 @@ RSpec.describe AttributesController, type: :controller do
   describe "POST #create" do
     context "with valid params" do
       it "creates a new Attribute" do
-        # Expect the Attribute count to increase by 1 when we post valid attributes
         expect {
           post :create, params: { form_id: form.id, attribute: valid_attributes }
         }.to change(Attribute, :count).by(1)
       end
 
+      it "associates the new Attribute with the correct Form" do
+        post :create, params: { form_id: form.id, attribute: valid_attributes }
+        expect(Attribute.last.form).to eq(form)
+      end
+
+      it "sets the options for an MCQ attribute" do
+        mcq_attributes = valid_attributes.merge(field_type: "mcq")
+        post :create, params: { form_id: form.id, attribute: mcq_attributes, mcq_options: [ "Option 1", "Option 2" ] }
+        expect(Attribute.last.options).to eq("Option 1,Option 2")
+      end
+
       it "redirects to the form edit page" do
-        # After creating an attribute, we should be redirected to the form's edit page
         post :create, params: { form_id: form.id, attribute: valid_attributes }
         expect(response).to redirect_to(edit_form_path(form))
       end
 
       it "sets a success notice" do
-        # Check if a success message is set in the flash
         post :create, params: { form_id: form.id, attribute: valid_attributes }
         expect(flash[:notice]).to eq("Attribute was successfully added.")
       end
@@ -41,20 +49,17 @@ RSpec.describe AttributesController, type: :controller do
 
     context "with invalid params" do
       it "does not create a new Attribute" do
-        # Expect the Attribute count not to change when we post invalid attributes
         expect {
           post :create, params: { form_id: form.id, attribute: invalid_attributes }
         }.to_not change(Attribute, :count)
       end
 
       it "redirects to the form edit page" do
-        # Even with invalid attributes, we should be redirected to the form's edit page
         post :create, params: { form_id: form.id, attribute: invalid_attributes }
         expect(response).to redirect_to(edit_form_path(form))
       end
 
       it "sets an alert message" do
-        # Check if an alert message is set in the flash for invalid attributes
         post :create, params: { form_id: form.id, attribute: invalid_attributes }
         expect(flash[:alert]).to eq("Failed to add attribute.")
       end

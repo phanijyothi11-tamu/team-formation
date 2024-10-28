@@ -8,16 +8,17 @@ class AttributesController < ApplicationController
     # POST /forms/:form_id/attributes
     # Creates a new attribute for a specific form
     def create
-        # Find the form using the form_id from the URL parameters
         @form = Form.find(params[:form_id])
-        # Build a new attribute associated with the form, using permitted parameters
         @attribute = @form.form_attributes.build(attribute_params)
 
+        if params[:attribute][:field_type] == "mcq"
+            mcq_options = params[:mcq_options].reject(&:blank?)
+            @attribute.options = mcq_options.join(",") unless mcq_options.empty?
+        end
+
         if @attribute.save
-            # If save is successful, redirect to the form's edit page with a success notice
             redirect_to edit_form_path(@form), notice: "Attribute was successfully added."
         else
-            # If save fails, redirect to the form's edit page with an error alert
             redirect_to edit_form_path(@form), alert: "Failed to add attribute."
         end
     end

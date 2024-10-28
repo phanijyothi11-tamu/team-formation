@@ -1,81 +1,55 @@
-<% content_for :title, "User Profile and Forms" %>
+<div class="container">
+  <h2 class="greeting">Howdy, <%= @current_user.name %></h2>
+  <div class="user-details">
+    <p><strong>Email:</strong> <%= @current_user.email %></p>
+  </div>
+  <h3 class="forms-title">Your Forms</h3>
+  
+  <%= link_to "Create New Form", new_form_path, class: "create-form-btn" %>
 
-<%= render 'shared/display_flash' %>
-
-<h2>Howdy, <%= @current_user.name %></h2>
-<div id="user-details">
-  <p>
-    <strong>Email:</strong>
-    <%= @current_user.email %>
-  </p>
-</div>
-
-<h3>Your Forms</h3>
-
-<%= link_to "Create New Form", new_form_path, class: "btn btn-primary mb-3" %>
-
-<% if @forms.any? %>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Deadline</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @forms.each do |form| %>
+  <% if @forms.any? %>
+    <table class="form-table table table-striped">
+      <thead class="table-header">
         <tr>
-          <td><%= form.name %></td>
-          <td><%= form.description %></td>
-          <td><%= form.deadline.present? ? form.deadline.strftime("%B %d, %Y %H:%M") : "No deadline set" %></td>
-          <td>
-            <%= link_to "View", form_path(form), class: "btn btn-sm btn-info" %>
-            <%= link_to "Edit", edit_form_path(form), class: "btn btn-sm btn-warning" %>
-            <%= link_to "Delete", form_path(form), method: :delete, data: { confirm: "Are you sure you want to delete this form?" }, class: "btn btn-sm btn-danger" %>
-            
-            <% if Rails.env.test? %>
-              <!-- Always visible deadline picker in test environment -->
-              <div id="deadline-picker-<%= form.id %>">
-                <%= form_with model: form, url: update_deadline_form_path(form), method: :patch, local: true do |f| %>
-                  <div class="form-group">
-                    <%= f.datetime_local_field :deadline, class: "form-control", id: "updated_deadline_#{form.id}" %>
-                  </div>
-                  <%= f.submit "Save", class: "btn btn-sm btn-success" %>
-                <% end %>
-              </div>
-            <% else %>
-              <!-- Button to show deadline picker in non-test environments -->
-              <button type="button" class="btn btn-sm btn-primary" onclick="toggleDeadlinePicker(<%= form.id %>)">Update Deadline</button>
-
-              <!-- Inline deadline picker, initially hidden in non-test environments -->
-              <div id="deadline-picker-<%= form.id %>" style="display:none;">
-                <%= form_with model: form, url: update_deadline_form_path(form), method: :patch, local: true do |f| %>
-                  <div class="form-group">
-                    <%= f.datetime_local_field :deadline, class: "form-control", id: "updated_deadline_#{form.id}" %>
-                  </div>
-                  <%= f.submit "Save", class: "btn btn-sm btn-success" %>
-                <% end %>
-              </div>
-            <% end %>
-          </td>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Deadline</th>
+          <th>Actions</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <p>No forms have been created yet.</p>
-<% end %>
+      </thead>
+      <tbody>
+        <% @forms.each do |form| %>
+          <tr>
+            <td><%= form.name %></td>
+            <td><%= form.description %></td>
+            <td><%= form.deadline.present? ? form.deadline.strftime("%B %d, %Y %H:%M") : "No deadline set" %></td>
+            <td class="actions-cell">
+              <%= link_to "View", form_path(form), class: "btn btn-info action-btn" %>
+              <%= link_to "Edit", edit_form_path(form), class: "btn btn-warning action-btn" %>
+              <%= link_to "Delete", form_path(form), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger action-btn" %>
+              <button type="button" class="btn btn-info action-btn" onclick="toggleDeadlinePicker(<%= form.id %>)">Update Deadline</button>
+              <div id="deadline-picker-<%= form.id %>" class="deadlinepicker" style="display:block;">
+                <%= form_with model: form, url: update_deadline_form_path(form), method: :patch, local: true do |f| %>
+                  <div class="form-group">
+                    <%= f.datetime_local_field :deadline, class: "form-control", id: "updated_deadline_#{form.id}" %>
+                  </div>
+                  <%= f.submit "Save", class: "save-btn" %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="no-forms-message">No forms have been created yet.</p>
+  <% end %>
 
-<%= link_to "Logout", logout_path, class: "btn btn-secondary mt-3" %>
-
-<% unless Rails.env.test? %>
-  <%# JavaScript to toggle deadline picker %>
+  <%= link_to "Logout", logout_path, class: "btn btn-secondary mt-3 logout-btn mt-3" %>
+</div>
   <script>
   function toggleDeadlinePicker(formId) {
     var picker = document.getElementById("deadline-picker-" + formId);
     picker.style.display = picker.style.display === "none" ? "block" : "none";
   }
   </script>
-<% end %>

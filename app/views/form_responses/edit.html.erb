@@ -1,0 +1,41 @@
+<h1>Submit Response for <%= @form.name %></h1>
+
+<%= form_with(model: [@form, @student, @form_response], url: form_response_path(@form_response), method: :patch, local: true) do |f| %>
+  <% if @form_response.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@form_response.errors.count, "error") %> prohibited this form from being saved:</h2>
+      <ul>
+        <% @form_response.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% @form.form_attributes.each do |attribute| %>
+    <div>
+      <%= label_tag "form_response_responses_#{attribute.id}", attribute.name %>
+      <% case attribute.field_type %>
+      <% when 'text_input' %>
+        <%= text_field_tag "form_response[responses][#{attribute.id}]", @form_response.responses[attribute.id.to_s], required: true %>
+      <% when 'mcq' %>
+        <% if attribute.options.present? %>
+          <%= select_tag "form_response[responses][#{attribute.id}]", options_for_select(attribute.options.split(','), @form_response.responses[attribute.id.to_s]), prompt: 'Select an option', required: true %>
+        <% else %>
+          <p>No options available for this field.</p>
+        <% end %>
+      <% when 'scale' %>
+        <%= number_field_tag "form_response[responses][#{attribute.id}]", @form_response.responses[attribute.id.to_s], min: attribute.min_value, max: attribute.max_value, required: true %>
+      <% else %>
+        <%= text_field_tag "form_response[responses][#{attribute.id}]", @form_response.responses[attribute.id.to_s], required: true %>
+      <% end %>
+    </div>
+    <br>
+  <% end %>
+<%= button_tag 'Submit Response', type: 'submit', id: 'submit_response_button', disabled: false %>
+
+
+
+
+
+<% end %>

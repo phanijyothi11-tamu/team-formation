@@ -58,6 +58,7 @@
     <%= form.submit "Save Form", class: "btn btn-primary" %>
     <%= button_tag 'Preview Form', type: 'button', class: 'button', onclick: "openPreviewModal()" %>
     <%= button_tag 'Duplicate Form', type: 'button', class: 'button', onclick: "window.open('#{duplicate_form_path(@form)}', '_blank')" %>
+    <%= link_to 'Upload Students', upload_form_path(@form.id), class: 'btn btn-primary' %>
   </div>
 <% end %>
 
@@ -71,6 +72,13 @@
         <%= attribute.name %> (<%= attribute.field_type %>)
         <% if attribute.field_type == 'scale' %>
           (Min: <%= attribute.min_value %>, Max: <%= attribute.max_value %>)
+        <% elsif attribute.field_type == 'mcq' %>
+          <ul>
+            <%# Display each option for MCQ questions, handling nil options %>
+            <% (attribute.options&.split(',') || []).each_with_index do |option, index| %>
+              <li>Option <%= index + 1 %>: <%= option %></li>
+            <% end %>
+          </ul>
         <% end %>
         <%# Display current weightage %>
         <div>
@@ -102,7 +110,7 @@
 
   <div>
     <%= f.label :field_type, "Attribute Type" %>
-    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { id: "attribute_type", onchange: 'toggleScaleFields(this.value)' } %>
+    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { id: "attribute_type", onchange: 'toggleFields(this.value)' } %>
   </div>
 
   <%# Additional fields for scale type %>
@@ -113,6 +121,20 @@
     <%= f.label :max_value, "Maximum Value" %>
     <%= f.number_field :max_value, id: "attribute_max_value" %>
   </div>
+
+  <div id="mcq_fields" style="display: none;">
+  <%= f.label :options, "MCQ Options" %>
+  <div id="mcq_options_container">
+    <div class="mcq_option">
+      <input type="text" name="mcq_options[]" placeholder="Option 1" class="form-control" />
+    </div>
+    <div class="mcq_option">
+      <input type="text" name="mcq_options[]" placeholder="Option 2" class="form-control" />
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-secondary" id="add_option_button">Add Option</button>
+</div>
 
   <%= f.submit "Save Attribute", id: "save_attribute" %>
 <% end %>
@@ -127,18 +149,38 @@
 
 <% unless Rails.env.test? %>
   <script>
-    function toggleScaleFields(fieldType) {
+    function toggleFields(fieldType) {
       var scaleFields = document.getElementById('scale_fields');
+      var mcqFields = document.getElementById('mcq_fields');
+
       scaleFields.style.display = fieldType === 'scale' ? 'block' : 'none';
+      mcqFields.style.display = (fieldType === 'mcq') ? 'block' : 'none';
     }
 
-    // Initialize the visibility
-    toggleScaleFields(document.getElementById('attribute_type').value);
+    document.getElementById('add_option_button').addEventListener('click', function() {
+      var container = document.getElementById('mcq_options_container');
+      var optionCount = container.getElementsByClassName('mcq_option').length + 1;
 
-  function openPreviewModal() {
-    var modal = document.getElementById('previewModal');
-    modal.style.display = "block";  // Show the modal
-  }
+      var newOptionDiv = document.createElement('div');
+      newOptionDiv.classList.add('mcq_option');
+
+      var newOptionInput = document.createElement('input');
+      newOptionInput.type = 'text';
+      newOptionInput.name = 'mcq_options[]'; 
+      newOptionInput.placeholder = 'Option ' + optionCount;
+      newOptionInput.classList.add('form-control');
+
+      newOptionDiv.appendChild(newOptionInput);
+      container.appendChild(newOptionDiv);
+    });
+
+    // Initialize the visibility
+    toggleFields(document.getElementById('attribute_type').value);
+
+    function openPreviewModal() {
+      var modal = document.getElementById('previewModal');
+      modal.style.display = "block";  // Show the modal
+    }
 
     function setDeadline() {
       var deadlinePicker = document.getElementById("deadline_picker");
@@ -150,18 +192,18 @@
       } else {
         document.getElementById("display_deadline").innerText = "Please select a deadline.";
       }
+    }
+
+    document.getElementById('form_submit_button').addEventListener('click', function(event) {
+      var deadlinePicker = document.getElementById('deadline_picker');
+      var selectedDeadline = new Date(deadlinePicker.value);
+      var now = new Date();
+
+      if (selectedDeadline < now) {
+        alert("The deadline cannot be in the past.");
+        event.preventDefault(); // Prevent form submission
       }
-
-      document.getElementById('form_submit_button').addEventListener('click', function(event) {
-        var deadlinePicker = document.getElementById('deadline_picker');
-        var selectedDeadline = new Date(deadlinePicker.value);
-        var now = new Date();
-
-        if (selectedDeadline < now) {
-          alert("The deadline cannot be in the past.");
-          event.preventDefault(); // Prevent form submission
-        }
-});
+    });
 
 
   </script>

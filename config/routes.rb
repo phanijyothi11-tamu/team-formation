@@ -13,6 +13,8 @@ Rails.application.routes.draw do
       patch "update_deadline"
       post "publish"
       post "close"
+      get "upload", to: "forms#upload", as: :upload
+      post "validate_upload", to: "forms#validate_upload"
     end
     resources :attributes do
       member do
@@ -70,6 +72,6 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/*
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  get "/upload", to: "forms#upload"
-  post "validate_upload", to: "forms#validate_upload"
+  get "/forms/:form_id/upload", to: "forms#upload"
+  post "/forms/:form_id/validate_upload", to: "forms#validate_upload"
 end

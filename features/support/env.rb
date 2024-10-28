@@ -12,6 +12,12 @@ require 'selenium-webdriver'
 require 'rack_session_access/capybara'
 require 'simplecov'
 SimpleCov.command_name 'Cucumber'
+SimpleCov.start do
+  add_filter '/spec/' # Exclude spec files from coverage
+  add_filter '/features/'
+  add_filter '/helpers/'
+end
+
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how

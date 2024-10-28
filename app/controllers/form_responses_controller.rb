@@ -54,16 +54,19 @@ class FormResponsesController < ApplicationController
 
   # GET /form_responses/:id/edit
   def edit
-    # @form_response is set by set_form_response before_action
+    @form_response = FormResponse.find(params[:id]) # Fetch form response by ID from URL
+    @form = @form_response.form                     # Load the associated form
+    @student = @form_response.student             
   end
 
   # PATCH/PUT /form_responses/:id
   def update
-    # @form_response is set by set_form_response before_action
-    if @form_response.update(form_response_params)
-      redirect_to @form_response, notice: "Form response was successfully updated."
+    @form_response = FormResponse.find(params[:id]) # Find the form response by ID
+    
+    if @form_response.update(form_response_params) # Update with the permitted params
+      render :success # Render the success view
     else
-      render :edit
+      render :edit # Re-render the edit form if there are errors
     end
   end
 

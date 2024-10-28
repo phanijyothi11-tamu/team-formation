@@ -12,12 +12,15 @@ class SessionsController < ApplicationController
     auth = request.env["omniauth.auth"]
 
     @user = User.find_by(email: auth["info"]["email"])
+    @student = Student.find_by(email: auth["info"]["email"])
 
     if @user
       session[:user_id] = @user.id
       redirect_to user_path(@user), notice: "You are logged in."
+    elsif @student
+      session[:student_id] = @student.id
+      redirect_to student_path(@student), notice: "Logged in as Student"
     else
-      # If user does not exist, redirect to welcome page with an error message
       redirect_to welcome_path, alert: "Login failed: User not found."
     end
   end

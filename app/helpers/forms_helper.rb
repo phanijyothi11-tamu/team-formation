@@ -8,23 +8,30 @@ module FormsHelper
     name_index = header_row.index("Name") || -1
     uin_index = header_row.index("UIN") || -1
     email_index = header_row.index("Email ID") || -1
+    section_index = header_row.index("Section") || -1
 
-    unless name_index >= 0 && uin_index >= 0 && email_index >= 0
-      flash[:alert] = "Missing required columns. Ensure 'Name', 'UIN', and 'Email ID' are present."
+    unless name_index >= 0 && uin_index >= 0 && email_index >= 0 && section_index >= 0
+      flash[:alert] = "Missing required columns. Ensure 'Name', 'UIN', 'Section' and 'Email ID' are present."
       return false # Indicate failure
     end
 
-    [ name_index, uin_index, email_index ] # Return indices if validation passes
+    [ name_index, uin_index, email_index, section_index ] # Return indices if validation passes
   end
 
   def validate_row(row, index, header_row)
-    name_index, uin_index, email_index = validate_header(header_row)
+    name_index, uin_index, email_index, section_index = validate_header(header_row)
 
-    return nil if name_index.nil? || uin_index.nil? || email_index.nil?
+    return nil if name_index.nil? || uin_index.nil? || email_index.nil? || section_index.nil?
 
     # Validate Name
     if row[name_index].blank?
       flash[:alert] = "Missing value in 'Name' column for row #{index}."
+      return nil
+    end
+
+    # Validate Section
+    if row[section_index].blank?
+      flash[:alert] = "Missing value in 'Section' column for row #{index}."
       return nil
     end
 
@@ -48,7 +55,7 @@ module FormsHelper
     end
 
     # Return user data if all validations pass
-    { name: row[name_index], uin: uin_value, email: email_value }
+    { name: row[name_index], uin: uin_value, email: email_value, section: row[section_index] }
   end
 
 

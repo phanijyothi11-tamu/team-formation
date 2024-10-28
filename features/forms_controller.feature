@@ -4,7 +4,7 @@ Feature: Validate file upload
   So that I can validate the file's content
 
   Background:
-    Given I am logged in as a valid user
+    Given I am logged in as a valid user with a form created
     And I am on the upload page
 
   Scenario: No file uploaded
@@ -21,7 +21,7 @@ Feature: Validate file upload
   Scenario: Missing required columns
     Given I have uploaded a file without 'Name', 'UIN', and 'Email ID' columns
     When I submit the upload form
-    Then I should see "Missing required columns. Ensure 'Name', 'UIN', and 'Email ID' are present."
+    Then I should see "Missing required columns. Ensure 'Name', 'UIN', 'Section' and 'Email ID' are present."
     And I should be redirected to my user profile page
 
   Scenario: Missing name in a row

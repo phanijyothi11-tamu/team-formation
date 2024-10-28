@@ -3,6 +3,13 @@ SimpleCov.start 'rails' do
   add_filter '/test/'
   add_filter '/config/'
   add_filter '/vendor/'
+  #Can be remived when use these classes
+  add_filter '/app/helpers/'
+  add_filter '/app/channels/application_cable/channel.rb'
+  add_filter '/app/channels/application_cable/connection.rb'
+  add_filter '/app/jobs/application_job.rb'
+  add_filter '/app/mailers/application_mailer.rb'
+  #-------------------------------------
 
   add_group 'Controllers', 'app/controllers'
   add_group 'Models', 'app/models'

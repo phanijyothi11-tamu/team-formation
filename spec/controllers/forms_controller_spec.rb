@@ -15,7 +15,7 @@ RSpec.describe FormsController, type: :controller do
 
   describe "GET #upload" do
     it "returns a success response" do
-      get :upload
+      get :upload, params: { id: form.id }
       expect(response).to be_successful
     end
   end
@@ -23,9 +23,9 @@ RSpec.describe FormsController, type: :controller do
   describe "POST #validate_upload" do
     context "when no file is uploaded" do
       it "sets a flash alert and redirects to the user page" do
-        post :validate_upload, params: { file: nil }
+        post :validate_upload, params: { id: form.id, file: nil }, format: :js
         expect(flash[:alert]).to eq("Please upload a file.")
-        expect(response).to redirect_to(user_path(user))
+        expect(response).to redirect_to(edit_form_path(form.id))
       end
     end
 
@@ -34,8 +34,8 @@ RSpec.describe FormsController, type: :controller do
 
       it "successfully validates the file and creates users" do
         expect {
-          post :validate_upload, params: { file: file }
-        }.to change(User, :count).by(1)
+          post :validate_upload, params: { id: form.id, file: file }
+        }.to change(Student, :count).by(1)
 
         expect(flash[:notice]).to eq("All validations passed.")
       end
@@ -44,7 +44,7 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('empty_header.csv', 'text/csv') }
 
         it "sets a flash alert for empty first row and redirects" do
-          post :validate_upload, params: { file: file }
+          post :validate_upload, params: { id: form.id, file: file }
           expect(flash[:alert]).to eq("The first row is empty. Please provide column names.")
         end
       end
@@ -53,8 +53,8 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('missing_columns.csv', 'text/csv') }
 
         it "sets a flash alert for missing columns and redirects" do
-          post :validate_upload, params: { file: file }
-          expect(flash[:alert]).to eq("Missing required columns. Ensure 'Name', 'UIN', and 'Email ID' are present.")
+          post :validate_upload, params: { id: form.id, file: file }
+          expect(flash[:alert]).to eq("Missing required columns. Ensure 'Name', 'UIN', 'Section' and 'Email ID' are present.")
         end
       end
 
@@ -62,9 +62,9 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('invalid_uin.csv', 'text/csv') }
 
         it "sets a flash alert for invalid UIN and redirects" do
-          post :validate_upload, params: { file: file }
+          post :validate_upload, params: { id: form.id, file: file }
           expect(flash[:alert]).to eq("Invalid UIN in 'UIN' column for row 2. It must be a 9-digit number.")
-          expect(response).to redirect_to(user_path(user))
+          expect(response).to redirect_to(edit_form_path(form.id))
         end
       end
 
@@ -72,9 +72,9 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('missing_email.csv', 'text/csv') }
 
         it "sets a flash alert for missing email and redirects" do
-          post :validate_upload, params: { file: file }
+          post :validate_upload, params: { id: form.id, file: file }
           expect(flash[:alert]).to eq("Missing value in 'Email ID' column for row 2.")
-          expect(response).to redirect_to(user_path(user))
+          expect(response).to redirect_to(edit_form_path(form.id))
         end
       end
 
@@ -82,9 +82,9 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('invalid_email.csv', 'text/csv') }
 
         it "sets a flash alert for invalid email and redirects" do
-          post :validate_upload, params: { file: file }
+          post :validate_upload, params: { id: form.id, file: file }
           expect(flash[:alert]).to eq("Invalid email in 'Email ID' column for row 2.")
-          expect(response).to redirect_to(user_path(user))
+          expect(response).to redirect_to(edit_form_path(form.id))
         end
       end
 
@@ -92,7 +92,7 @@ RSpec.describe FormsController, type: :controller do
         let(:file) { fixture_file_upload('missing_name.csv', 'text/csv') }
 
         it "sets a flash alert for missing name and redirects" do
-          post :validate_upload, params: { file: file }
+          post :validate_upload, params: { id: form.id, file: file }
           expect(flash[:alert]).to eq("Missing value in 'Name' column for row 2.")
         end
       end
@@ -303,7 +303,7 @@ RSpec.describe FormsController, type: :controller do
   describe "GET #upload" do
     it "returns a success response" do
       # Test if the upload action returns a successful response
-      get :upload
+      get :upload, params: { id: form.id }
       expect(response).to be_successful
     end
   end

@@ -10,6 +10,12 @@
   </head>
 
   <body>
+    <div class="header-block">
+      <div class="header-content">
+        <%= raw File.read(Rails.root.join('app', 'assets', 'images', 'CMYK-TAM-MaroonBox.svg')) %>
+        <span class="header-text">Teams</span>
+      </div>
+    </div>
     <div id="flash-messages">
       <% flash.each do |type, message| %>
         <div class="alert <%= type == 'alert' ? 'alert-danger' : 'alert-success' %> fade show" role="alert">
