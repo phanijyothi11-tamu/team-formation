@@ -287,125 +287,121 @@ class FormsController < ApplicationController
       # This hash contains the team distribution data for all sections
       team_distribution
     end
-end
+  end
 
 
   def populate_teams_based_on_gender(team_distribution)
-    # Iterate over each section in the team distribution hash
     team_distribution.each do |section, details|
-      total_teams = details[:total_teams]
-      
-      # Create empty teams based on the number of teams 
-      teams = Array.new(total_teams) { [] }
-
-      # Get form responses and initialize lists for all gender categories
-      responses = details[:form_responses]
-
-      female_students = []
-      other_students = []
-      male_students = []
-      prefer_not_to_say_students = []
-      
-      form = Form.find(responses.first.form_id)
-
-      gender_attribute = form.form_attributes.find { |attr| attr.name.downcase == "gender" }
-
-      # Categorize students by their gender and calculate their weighted average score
-      responses.each do |response|
-        student = response.student
-        gender_value = response.responses[gender_attribute.id.to_s]
-        # Skip if gender_value is nil or empty
-        next if gender_value.nil? || gender_value.strip.empty?
-        weighted_average = calculate_weighted_average(response)
-
-        case gender_value.downcase
-        when "female"
-          female_students << { student: student, score: weighted_average }
-        when "other"
-          other_students << { student: student, score: weighted_average }
-        when "male"
-          male_students << { student: student, score: weighted_average }
-        when "prefer not to say"
-          prefer_not_to_say_students << { student: student, score: weighted_average }
-        end
-      end
-
-      # Sort the female and other students by their weighted average scores (descending)
-      female_students.sort_by! { |s| -s[:score] }
-      other_students.sort_by! { |s| -s[:score] }
-
-      
-      # Case 1: Even number of female students
-        if female_students.size.even?
-          i = 0
-          j = female_students.size - 1
-          team_index = 0
-
-          # Assign 2 females to each team
-          while i <= j && team_index < teams.size
-            teams[team_index] << female_students[i][:student]  # High scorer
-            i += 1
-            teams[team_index] << female_students[j][:student]  # Low scorer
-            j -= 1
-            team_index += 1
-          end
-        end
-
-        # Case 2: Odd number of female students
-      if female_students.size.odd?
-        i = 0
-        j = female_students.size - 1
-        team_index = 0
-
-        # Assign 3 females to one team if the remaining number of females is 3
-        while i <= j && team_index < teams.size
-          remaining_females = j - i + 1
-
-          if remaining_females == 3
-            # Assign the last 3 females to one team
-            teams[team_index] << female_students[i][:student]
-            i += 1
-            teams[team_index] << female_students[i][:student]
-            i += 1
-            teams[team_index] << female_students[i][:student]
-            i += 1
-            team_index += 1
-            break
-          elsif remaining_females >= 2
-            # Assign 2 females to the team
-            teams[team_index] << female_students[i][:student]  # High scorer
-            i += 1
-            teams[team_index] << female_students[j][:student]  # Low scorer
-            j -= 1
-            team_index += 1
-          end
-        end
-      end
-
-
-      # Assign one "other" student to each team with 2 or 3 females
-      teams.each do |team|
-        break if other_students.empty? # Stop if no "other" students left
-        if team.size >= 2 && team.size < 4 # Ensure teams with 2 or 3 females get an "other" student
-          team << other_students.shift[:student]
-        end
-      end
-
-      # Store the final teams and the remaining students for this section
+      teams = initialize_teams(details[:total_teams])
+      gender_attribute = get_gender_attribute(details[:form_responses])
+  
+      # Categorize students by gender
+      students_by_gender = categorize_students_by_gender(details[:form_responses], gender_attribute)
+  
+      # Distribute female students into teams
+      distribute_female_students(students_by_gender[:female], teams)
+  
+      # Assign one "other" student to teams with 2 or 3 females
+      distribute_other_students(students_by_gender[:other], teams)
+  
+      # Store the final teams and remaining students
       details[:teams] = teams
-
-      remaining_students = female_students + other_students + male_students + prefer_not_to_say_students
-
-      # store all remaining students
-      details[:remaining_students] = remaining_students
-
+      details[:remaining_students] = collect_remaining_students(students_by_gender)
+  
       # Update the section in the team_distribution
       team_distribution[section] = details
-      end
-
-    # Return the updated team distribution hash
+    end
     team_distribution
   end
+  
+  # Helper to initialize teams
+  def initialize_teams(total_teams)
+    Array.new(total_teams) { [] }
+  end
+  
+  # Helper to get the gender attribute from form responses
+  def get_gender_attribute(responses)
+    form = Form.find(responses.first.form_id)
+    form.form_attributes.find { |attr| attr.name.downcase == "gender" }
+  end
+  
+  # Helper to categorize students by gender and calculate weighted average scores
+  def categorize_students_by_gender(responses, gender_attribute)
+    categorized_students = { female: [], male: [], other: [], prefer_not_to_say: [] }
+    responses.each do |response|
+      student = response.student
+      gender_value = response.responses[gender_attribute.id.to_s]
+      next if gender_value.nil? || gender_value.strip.empty?
+      weighted_average = calculate_weighted_average(response)
+  
+      case gender_value.downcase
+      when "female"
+        categorized_students[:female] << { student: student, score: weighted_average }
+      when "male"
+        categorized_students[:male] << { student: student, score: weighted_average }
+      when "other"
+        categorized_students[:other] << { student: student, score: weighted_average }
+      when "prefer not to say"
+        categorized_students[:prefer_not_to_say] << { student: student, score: weighted_average }
+      end
+    end
+    categorized_students[:female].sort_by! { |s| -s[:score] }
+    categorized_students[:other].sort_by! { |s| -s[:score] }
+    categorized_students
+  end
+  
+  # Helper to distribute female students into teams
+  def distribute_female_students(female_students, teams)
+    if female_students.size.even?
+      assign_pairs_to_teams(female_students, teams)
+    else
+      assign_pairs_with_remainder(female_students, teams)
+    end
+  end
+  
+  # Helper to assign pairs of female students to teams
+  def assign_pairs_to_teams(students, teams)
+    i, j, team_index = 0, students.size - 1, 0
+    while i <= j && team_index < teams.size
+      teams[team_index] << students[i][:student]
+      teams[team_index] << students[j][:student]
+      i += 1
+      j -= 1
+      team_index += 1
+    end
+  end
+  
+  # Helper to handle odd-numbered female distribution with 3 remaining students
+  def assign_pairs_with_remainder(students, teams)
+    i, j, team_index = 0, students.size - 1, 0
+    while i <= j && team_index < teams.size
+      remaining = j - i + 1
+      if remaining == 3
+        3.times { teams[team_index] << students[i][:student]; i += 1 }
+        break
+      else
+        teams[team_index] << students[i][:student]
+        teams[team_index] << students[j][:student]
+        i += 1
+        j -= 1
+      end
+      team_index += 1
+    end
+  end
+  
+  # Helper to assign one "other" student to teams with 2 or 3 females
+  def distribute_other_students(other_students, teams)
+    teams.each do |team|
+      break if other_students.empty?
+      team << other_students.shift[:student] if team.size >= 2 && team.size < 4
+    end
+  end
+  
+  # Helper to collect all remaining students by gender
+  def collect_remaining_students(students_by_gender)
+    students_by_gender.values.flatten
+  end
+  
 
 
 
