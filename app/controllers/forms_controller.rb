@@ -393,11 +393,11 @@ end
 
       # Store the final teams and the remaining students for this section
       details[:teams] = teams
-      # Store the remaining students in this section
-      details[:remaining_female_students] = female_students
-      details[:remaining_other_students] = other_students
-      details[:remaining_male_students] = male_students
-      details[:remaining_prefer_not_to_say_students] = prefer_not_to_say_students
+
+      remaining_students = female_students + other_students + male_students + prefer_not_to_say_students
+
+      # store all remaining students
+      details[:remaining_students] = remaining_students
 
       # Update the section in the team_distribution
       team_distribution[section] = details

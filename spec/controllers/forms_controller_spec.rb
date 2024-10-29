@@ -630,6 +630,7 @@ RSpec.describe FormsController, type: :controller do
         "B" => {
           total_students: 15,
           teams_of_4: 3,
+          teams_of_3: 0,
           total_teams: 3,
           form_responses: form.form_responses.joins(:student).where(students: { section: "B" })
         }
@@ -637,6 +638,14 @@ RSpec.describe FormsController, type: :controller do
 
       updated_distribution = controller.send(:populate_teams_based_on_gender, team_distribution)
   
+      # Verify that updated_distribution has the same attributes as team_distribution for each section
+      team_distribution.each do |section, details|
+        # Check each attribute in team_distribution is present and unchanged in updated_distribution
+        expect(updated_distribution[section][:total_students]).to eq(details[:total_students])
+        expect(updated_distribution[section][:teams_of_4]).to eq(details[:teams_of_4])
+        expect(updated_distribution[section][:total_teams]).to eq(details[:total_teams])
+        expect(updated_distribution[section][:form_responses]).to match_array(details[:form_responses])
+      end
       # Validate team distribution for section B
       section_b = updated_distribution["B"]
       expected_b_team_genders = [
