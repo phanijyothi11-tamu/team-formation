@@ -394,7 +394,9 @@ class FormsController < ApplicationController
       remaining = j - i + 1
       if remaining == 3
         assign_three_students_to_team(teams[team_index], students, i)
-        break
+        i += 3 # Move index i forward by 3 after assigning three students
+        team_index += 1
+        next
       else
         assign_pair_to_team(teams[team_index], students, i, j)
         i += 1
@@ -403,6 +405,20 @@ class FormsController < ApplicationController
       team_index += 1
     end
   end
+  
+  
+  def assign_three_students_to_team(team, students, index)
+    3.times do
+      team << students[index][:student]
+      index += 1
+    end
+  end
+  
+  def assign_pair_to_team(team, students, i, j)
+    team << students[i][:student]  # High scorer
+    team << students[j][:student]  # Low scorer
+  end
+  
 
   def assign_three_students_to_team(team, students, start_index)
     3.times { |n| team << students[start_index + n][:student] }
