@@ -390,36 +390,32 @@ class FormsController < ApplicationController
   def assign_pairs_with_remainder(students, teams)
     i, j, team_index = 0, students.size - 1, 0
   
-    while i <= j && team_index < teams.size
+    while team_index < teams.size && i <= j
       remaining = j - i + 1
+  
+      # Assign three students if exactly three remain
       if remaining == 3
         assign_three_students_to_team(teams[team_index], students, i)
-        i += 3 # Move index i forward by 3 after assigning three students
-        team_index += 1
-        next
+        i += 3
       else
         assign_pair_to_team(teams[team_index], students, i, j)
         i += 1
         j -= 1
       end
+      
       team_index += 1
     end
   end
   
-  
   def assign_three_students_to_team(team, students, index)
-    3.times do
-      team << students[index][:student]
-      index += 1
-    end
+    3.times { team << students[index][:student]; index += 1 }
   end
   
   def assign_pair_to_team(team, students, i, j)
-    team << students[i][:student]  # High scorer
-    team << students[j][:student]  # Low scorer
-  end
+    team << students[i][:student]
+    team << students[j][:student]
+  end  
   
-
   def assign_three_students_to_team(team, students, start_index)
     3.times { |n| team << students[start_index + n][:student] }
   end
