@@ -167,6 +167,44 @@ class FormsController < ApplicationController
     end
   end
 
+  def calculate_teams_dummy
+    team_distribution = self.dummy_calculate_teams  # Call the function
+    team_distribution_with_genders = self.dummy_populate_teams_based_on_gender(team_distribution)
+
+    @pretty_team_distribution = format_team_distribution(team_distribution_with_genders)
+  end
+
+  def format_team_distribution(distribution)
+    return "null" if distribution.blank?
+
+    output = ""
+    distribution.each do |team_id, team_info|
+      output << "Team ID: #{team_id}\n"
+      output << "Total Students: #{team_info[:total_students]}\n"
+      output << "Teams of 4: #{team_info[:teams_of_4]}\n"
+      output << "Teams of 3: #{team_info[:teams_of_3]}\n"
+      output << "Total Teams: #{team_info[:total_teams]}\n"
+      output << "Students:\n"
+
+      team_info[:teams].each_with_index do |team, index|
+        output << "  Team #{index + 1}: "
+        output << team.map { |student| "#{student.name} (UIN: #{student.uin})" }.join(", ")
+        output << "\n"
+      end
+
+      output << "Remaining Students:\n"
+      team_info[:remaining_students].each do |remaining_student|
+        student = remaining_student[:student]
+        output << "  #{student.name} (UIN: #{student.uin}), Score: #{remaining_student[:score]}\n"
+      end
+
+      output << "\n"
+    end
+
+    output
+  end
+
+
   # Add a new method for updating deadline from index page
   def update_deadline
     if @form.update(deadline_params)
@@ -242,6 +280,112 @@ class FormsController < ApplicationController
       params.require(:form).permit(:deadline)
     end
 
+    def dummy_calculate_teams
+      # Fetch all form responses for this form and group them by the student's section
+      # The 'includes(:student)' eager loads the associated student data to avoid N+1 queries
+      # The result is a hash where keys are section names and values are arrays of form responses
+      sections = Form.find(1).form_responses.includes(:student).group_by { |response| response.student.section }
+
+      # Initialize an empty hash to store the team distribution for each section
+      team_distribution = {}
+
+      # Iterate over each section and its responses
+      sections.each do |section, responses|
+        # Count the total number of students (responses) in this section
+        total_students = responses.count
+
+        # Calculate the base number of teams of 4 we can form
+        base_teams = total_students / 4
+
+        # Calculate how many students are left over after forming teams of 4
+        remainder = total_students % 4
+
+        # Determine the final number of teams of 4 based on the remainder
+        # We adjust this to allow for teams of 3 when necessary
+        teams_of_4 = case remainder
+        when 0 then base_teams     # If no remainder, all teams are of size 4
+        when 1 then base_teams - 2 # If remainder 1, we need 3 teams of 3
+        when 2 then base_teams - 1 # If remainder 2, we need 2 teams of 3
+        when 3 then base_teams     # If remainder 3, we need 1 team of 3
+        end
+
+        teams_of_3 = remainder.zero? ? 0 : 4 - remainder
+
+        # Store the calculated distribution for this section
+        team_distribution[section] = {
+          total_students: total_students,  # Total number of students in this section
+          teams_of_4: teams_of_4,          # Number of teams with 4 members
+          teams_of_3: teams_of_3,          # Number of teams with 3 members
+          total_teams: teams_of_4 + teams_of_3,  # Total number of teams in this section
+          form_responses: responses        # Array of form response objects for this section
+        }
+      end
+
+      # Return the complete team distribution hash
+      # This hash contains the team distribution data for all sections
+      team_distribution
+    end
+
+    def dummy_populate_teams_based_on_gender(team_distribution)
+      team_distribution.each do |section, details|
+        teams = initialize_teams(details[:total_teams])
+        # create an empty var to store the based on ethnicities and genders
+        @form = Form.find(details[:form_responses].first.form_id)
+        # gender_attribute = get_gender_attribute(details[:form_responses])
+        ethnicity_attribute = get_ethnicity_attribute(details[:form_responses])
+        genders = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "gender").limit(1).pluck(:options).first.to_s.split(",")
+        ethnicities = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "ethnicity").limit(1).pluck(:options).first.to_s.split(",")
+        categorized_students = initialize_categorized_students(genders, ethnicities)
+
+        # populate based on gender and ethnicity
+        gender_ethnicity_populate(details[:form_responses], categorized_students)
+
+        # calculate minorities
+        segregation = calculate_minorities(details[:form_responses], ethnicities, ethnicity_attribute)
+        minorities = segregation[0]
+        majorities = segregation[1]
+
+        # Categorize students by gender
+        students_by_gender_ethnicity = populate_teams_by_gender_and_minority(teams, categorized_students, minorities, majorities, team_distribution)
+
+        # Distribute female students into teams
+        distribute_female_students(students_by_gender[:female], teams)
+
+        # Assign one "other" student to teams with 2 or 3 females
+        distribute_other_students(students_by_gender[:other], teams)
+
+        # Store the final teams and remaining students
+        details[:teams] = teams
+        details[:remaining_students] = collect_remaining_students(students_by_gender)
+
+        # Update the section in the team_distribution
+        # team_distribution[section] = details
+        team_distribution[section] = students_by_gender_ethnicity
+      end
+      team_distribution
+    end
+
+    def calculate_minorities(details, ethnicities, ethnicity_attribute)
+      ethnicity_counts = Hash.new(0)
+      total_population = responses.size
+      responses.each do |response|
+        ethnicity_value = response.responses[ethnicity_attribute.id.to_s]
+        ethnicity_counts[ethnicity_value] += 1 if ethnicity_value.present?
+      end
+      threshold = total_population * 0.3
+      minority_ethnicities = ethnicity_counts.select { |_, count| count < threshold }.keys
+      remaining_ethnicities = ethnicity_counts.select { |_, count| count >= threshold }.keys
+      [ minority_ethnicities, remaining_ethnicities ]
+    end
+
+    def gender_ethnicity_populate(responses, categorized_students)
+      responses.each do |response|
+        ethnicity_value = response.responses[ethnicity_attribute.id.to_s]
+        gender_value = response.responses[gender_attribute.id.to_s]
+        categorized_students[ethnicity_value][gender_value] << response.student_id unless categorized_students[ethnicity_value][gender_value].include?(response.student_id)
+      end
+    end
+
     def calculate_teams
       # Fetch all form responses for this form and group them by the student's section
       # The 'includes(:student)' eager loads the associated student data to avoid N+1 queries
@@ -287,44 +431,93 @@ class FormsController < ApplicationController
       # This hash contains the team distribution data for all sections
       team_distribution
     end
-  end
+end
 
 
   def populate_teams_based_on_gender(team_distribution)
     team_distribution.each do |section, details|
       teams = initialize_teams(details[:total_teams])
       gender_attribute = get_gender_attribute(details[:form_responses])
-  
+
       # Categorize students by gender
       students_by_gender = categorize_students_by_gender(details[:form_responses], gender_attribute)
-  
+
       # Distribute female students into teams
       distribute_female_students(students_by_gender[:female], teams)
-  
+
       # Assign one "other" student to teams with 2 or 3 females
       distribute_other_students(students_by_gender[:other], teams)
-  
+
       # Store the final teams and remaining students
       details[:teams] = teams
       details[:remaining_students] = collect_remaining_students(students_by_gender)
-  
+
       # Update the section in the team_distribution
       team_distribution[section] = details
     end
     team_distribution
   end
-  
+
   # Helper to initialize teams
   def initialize_teams(total_teams)
     Array.new(total_teams) { [] }
   end
-  
+
   # Helper to get the gender attribute from form responses
   def get_gender_attribute(responses)
     form = Form.find(responses.first.form_id)
     form.form_attributes.find { |attr| attr.name.downcase == "gender" }
   end
-  
+
+  def get_ethnicity_attribute(responses)
+    form = Form.find(responses.first.form_id)
+    form.form_attributes.find { |attr| attr.name.downcase == "ethnicity" }
+  end
+
+  def populate_teams_by_gender_and_minority(teams, categorized_students, minorities, majorities, team_distribution)
+    # teams.each_with_index do |team, team_index|
+    minorities.each do |minority|
+      teams.each_with_index do |team, team_index|
+        minority_teams = []
+        females = categorized_students[minority]["female"]
+        males = categorized_students[minority]["male"]
+
+        if females.size >= 2
+          # Take and remove the first two females from categorized_students
+          team << females.shift(2)
+          minority_teams << team_index
+          next
+        end
+
+        if females.size == 1
+          selected_majority = majorities.sample
+          non_minority_female = categorized_students[selected_majority]["female"].shift
+          if non_minority_female
+            male_in_minority = males.shift if males.any?
+            if male_in_minority
+              # add 3 of them to a team
+              team << [ females.shift, non_minority_female, male_in_minority ].compact
+            else
+              # shift the non minority female back to the array
+              categorized_students[selected_majority]["female"].unshift(non_minority_female)
+            end
+          else
+            teams[minority_teams.sample] << females.shift
+          end
+        end
+      end
+    end
+    # end
+  end
+
+
+
+
+
+
+
+
+
   # Helper to categorize students by gender and calculate weighted average scores
   def categorize_students_by_gender(responses, gender_attribute)
     categorized_students = initialize_categorized_students
@@ -333,23 +526,28 @@ class FormsController < ApplicationController
     end
     sort_categorized_students(categorized_students)
   end
-  
+
   private
-  
-  def initialize_categorized_students
-    { female: [], male: [], other: [], prefer_not_to_say: [] }
+
+  def initialize_categorized_students(genders, ethnicities)
+    gender_ethnicity_division = outer_keys.each_with_object({}) do |outer_key, outer_map|
+      outer_map[outer_key] = inner_keys.each_with_object({}) do |inner_key, inner_map|
+        inner_map[inner_key] = []
+      end
+    end
+    gender_ethnicity_division
   end
-  
+
   def categorize_student(response, gender_attribute, categorized_students)
     student = response.student
     gender_value = response.responses[gender_attribute.id.to_s]
     return if gender_value.nil? || gender_value.strip.empty?
-    
+
     category = gender_category(gender_value)
     weighted_average = calculate_weighted_average(response)
     categorized_students[category] << { student: student, score: weighted_average } if category
   end
-  
+
   def gender_category(gender_value)
     case gender_value.downcase
     when "female" then :female
@@ -358,13 +556,13 @@ class FormsController < ApplicationController
     when "prefer not to say" then :prefer_not_to_say
     end
   end
-  
+
   def sort_categorized_students(categorized_students)
     categorized_students[:female].sort_by! { |s| -s[:score] }
     categorized_students[:other].sort_by! { |s| -s[:score] }
     categorized_students
   end
-  
+
   # Helper to distribute female students into teams
   def distribute_female_students(female_students, teams)
     if female_students.size.even?
@@ -373,59 +571,59 @@ class FormsController < ApplicationController
       assign_pairs_with_remainder(female_students, teams)
     end
   end
-  
+
   # Helper to assign pairs of female students to teams
   def assign_pairs_to_teams(students, teams)
-    i, j, team_index = 0, students.size - 1, 0
-    while i <= j && team_index < teams.size
-      teams[team_index] << students[i][:student]
-      teams[team_index] << students[j][:student]
-      i += 1
-      j -= 1
+    team_index = 0
+    while students.size > 1 && team_index < teams.size
+      # Add the first student from the end of the array
+      teams[team_index] << students.pop[:student]
+
+      # Add the last student from the start of the array
+      teams[team_index] << students.shift[:student]
+
       team_index += 1
     end
   end
-  
+
   # Helper to handle odd-numbered female distribution with 3 remaining students
   def assign_pairs_with_remainder(students, teams)
     i, j, team_index = 0, students.size - 1, 0
-  
+
     while team_index < teams.size && i <= j
       remaining = j - i + 1
-  
+
       # Assign three students if exactly three remain
       if remaining == 3
         assign_three_students_to_team(teams[team_index], students, i)
-        i += 3
+        i += 3  # Move the index forward by 3
       else
         assign_pair_to_team(teams[team_index], students, i, j)
-        i += 1
-        j -= 1
+        i += 1  # Move the start index forward
+        j -= 1  # Move the end index backward
       end
-      
+
       team_index += 1
     end
+
+    # Update the students array to reflect removed students
+    students.slice!(0...i+1) # Removes assigned students
   end
-  
+
   def assign_three_students_to_team(team, students, index)
-    3.times { team << students[index][:student]; index += 1 }
+    team << students[index][:student]
+    team << students[index + 1][:student]
+    team << students[index + 2][:student]
   end
-  
-  def assign_pair_to_team(team, students, i, j)
-    team << students[i][:student]
-    team << students[j][:student]
-  end  
-  
-  def assign_three_students_to_team(team, students, start_index)
-    3.times { |n| team << students[start_index + n][:student] }
+
+  def assign_pair_to_team(team, students, start_index, end_index)
+    team << students[start_index][:student]
+    team << students[end_index][:student]
   end
-  
-  def assign_pair_to_team(team, students, i, j)
-    team << students[i][:student]
-    team << students[j][:student]
-  end
-  
-  
+
+
+
+
   # Helper to assign one "other" student to teams with 2 or 3 females
   def distribute_other_students(other_students, teams)
     teams.each do |team|
@@ -433,15 +631,15 @@ class FormsController < ApplicationController
       add_student_to_team_if_eligible(team, other_students)
     end
   end
-  
+
   def add_student_to_team_if_eligible(team, other_students)
     team << other_students.shift[:student] if eligible_for_other_student?(team)
   end
-  
+
   def eligible_for_other_student?(team)
     team.size >= 2 && team.size < 4
   end
-  
+
   # Helper to collect all remaining students by gender
   def collect_remaining_students(students_by_gender)
     students_by_gender.values.flatten
@@ -449,7 +647,7 @@ class FormsController < ApplicationController
 
   # Helper method to calculate the weighted average score for a student
   def calculate_weighted_average(response)
-  excluded_attrs = ['gender', 'ethnicity']
+  excluded_attrs = [ "gender", "ethnicity" ]
   attributes = response.form.form_attributes.reject { |attr| excluded_attrs.include?(attr.name.downcase) }
 
   total_score = 0.0
@@ -458,7 +656,7 @@ class FormsController < ApplicationController
   attributes.each do |attribute|
     weightage = attribute.weightage
     student_response = response.responses[attribute.id.to_s]  # Convert id to string
-    
+
     if student_response.present?
       score = student_response.to_f
       total_score += score * weightage
@@ -468,4 +666,3 @@ class FormsController < ApplicationController
   # Return the weighted average score
   total_weight > 0 ? (total_score / total_weight) : 0
   end
-

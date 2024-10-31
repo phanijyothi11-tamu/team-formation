@@ -3,7 +3,7 @@ SimpleCov.start 'rails' do
   add_filter '/test/'
   add_filter '/config/'
   add_filter '/vendor/'
-  #Can be remived when use these classes
+  # Can be remived when use these classes
   add_filter '/app/helpers/'
   add_filter '/app/channels/application_cable/channel.rb'
   add_filter '/app/channels/application_cable/connection.rb'

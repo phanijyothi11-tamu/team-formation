@@ -57,13 +57,13 @@ class FormResponsesController < ApplicationController
   def edit
     @form_response = FormResponse.find(params[:id]) # Fetch form response by ID from URL
     @form = @form_response.form                     # Load the associated form
-    @student = @form_response.student             
+    @student = @form_response.student
   end
 
   # PATCH/PUT /form_responses/:id
   def update
     @form_response = FormResponse.find(params[:id]) # Find the form response by ID
-    
+
     if @form_response.update(form_response_params) # Update with the permitted params
       render :success # Render the success view
     else

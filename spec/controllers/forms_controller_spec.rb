@@ -588,12 +588,12 @@ RSpec.describe FormsController, type: :controller do
       end
     end
   end
-  
+
   describe '#populate_teams_based_on_gender' do
     let(:user) { create(:user) }
     let!(:form) { create(:form, name: "Team Formation Form", description: "Form for collecting team preferences", user: user) }
     let!(:gender_attr) { form.form_attributes.create!(name: "Gender", field_type: "mcq", options: "male,female,other,prefer not to say") }
-    let!(:sections) { ["A", "B"] }
+    let!(:sections) { [ "A", "B" ] }
 
     # Helper method to set @form
     def set_form
@@ -637,7 +637,7 @@ RSpec.describe FormsController, type: :controller do
       }
 
       updated_distribution = controller.send(:populate_teams_based_on_gender, team_distribution)
-  
+
       # Verify that updated_distribution has the same attributes as team_distribution for each section
       team_distribution.each do |section, details|
         # Check each attribute in team_distribution is present and unchanged in updated_distribution
@@ -653,7 +653,7 @@ RSpec.describe FormsController, type: :controller do
         { female: 3, male: 0, other: 1, prefer_not_to_say: 0 },
         { female: 0, male: 0, other: 0, prefer_not_to_say: 0 }
       ]
-      
+
       expect(section_b[:teams].size).to eq(3) # Expect 3 teams
       section_b[:teams].each_with_index do |team, index|
         expect(team.size).to be_between(0, 4)
@@ -663,7 +663,7 @@ RSpec.describe FormsController, type: :controller do
         expect(genders.count('other')).to eq(expected_b_team_genders[index][:other])
         expect(genders.count('prefer not to say')).to eq(expected_b_team_genders[index][:prefer_not_to_say])
       end
-    
+
       # Validate team distribution for section A
       section_a = updated_distribution["A"]
       expected_a_team_genders = [
@@ -671,7 +671,7 @@ RSpec.describe FormsController, type: :controller do
         { female: 2, male: 0, other: 1, prefer_not_to_say: 0 },
         { female: 2, male: 0, other: 0, prefer_not_to_say: 0 }
       ]
-    
+
       expect(section_a[:teams].size).to eq(3) # Expect 3 teams
       section_a[:teams].each_with_index do |team, index|
         expect(team.size).to be_between(0, 4)

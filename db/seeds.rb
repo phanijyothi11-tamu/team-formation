@@ -22,5 +22,3 @@ FormResponse.create!(
   responses: {}.to_json
 )
 puts "New seed data created successfully!"
-
-
