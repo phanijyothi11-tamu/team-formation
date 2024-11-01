@@ -186,17 +186,23 @@ class FormsController < ApplicationController
       output << "Total Teams: #{team_info[:total_teams]}\n"
       output << "Students:\n"
 
-      team_info[:teams].each_with_index do |team, index|
+      team_info[:teams3].each_with_index do |team, index|
         output << "  Team #{index + 1}: "
-        output << team.map { |student| "#{student.name} (UIN: #{student.uin})" }.join(", ")
+        output << team.to_s
         output << "\n"
       end
 
-      output << "Remaining Students:\n"
-      team_info[:remaining_students].each do |remaining_student|
-        student = remaining_student[:student]
-        output << "  #{student.name} (UIN: #{student.uin}), Score: #{remaining_student[:score]}\n"
+      team_info[:teams4].each_with_index do |team, index|
+        output << "  Team #{index + 1}: "
+        output << team.to_s
+        output << "\n"
       end
+
+      # output << "Remaining Students:\n"
+      # team_info[:remaining_students].each do |remaining_student|
+      #   student = remaining_student[:student]
+      #   output << "  #{student.name} (UIN: #{student.uin}), Score: #{remaining_student[:score]}\n"
+      # end
 
       output << "\n"
     end
@@ -328,44 +334,45 @@ class FormsController < ApplicationController
 
     def dummy_populate_teams_based_on_gender(team_distribution)
       team_distribution.each do |section, details|
-        teams = initialize_teams(details[:total_teams])
+        teams_3 = Array.new(details[:teams_of_3]) { [] }
+        teams_4 = Array.new(details[:teams_of_4]) { [] }
         # create an empty var to store the based on ethnicities and genders
         @form = Form.find(details[:form_responses].first.form_id)
-        # gender_attribute = get_gender_attribute(details[:form_responses])
+        gender_attribute = get_gender_attribute(details[:form_responses])
         ethnicity_attribute = get_ethnicity_attribute(details[:form_responses])
         genders = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "gender").limit(1).pluck(:options).first.to_s.split(",")
         ethnicities = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "ethnicity").limit(1).pluck(:options).first.to_s.split(",")
-        categorized_students = initialize_categorized_students(genders, ethnicities)
+        categorized_students = categorize_students_by_gender(details[:form_responses], gender_attribute, ethnicity_attribute, genders, ethnicities)
 
         # populate based on gender and ethnicity
-        gender_ethnicity_populate(details[:form_responses], categorized_students)
+        # gender_ethnicity_populate(details[:form_responses], categorized_students, ethnicity_attribute, gender_attribute)
 
         # calculate minorities
         segregation = calculate_minorities(details[:form_responses], ethnicities, ethnicity_attribute)
         minorities = segregation[0]
         majorities = segregation[1]
-
         # Categorize students by gender
-        students_by_gender_ethnicity = populate_teams_by_gender_and_minority(teams, categorized_students, minorities, majorities, team_distribution)
+        students_by_gender_ethnicity = populate_teams_by_gender_and_minority(teams_3, teams_4, categorized_students, minorities, majorities)
 
         # Distribute female students into teams
-        distribute_female_students(students_by_gender[:female], teams)
+        # distribute_female_students(students_by_gender[:female], teams)
 
         # Assign one "other" student to teams with 2 or 3 females
-        distribute_other_students(students_by_gender[:other], teams)
+        # distribute_other_students(students_by_gender[:other], teams)
 
         # Store the final teams and remaining students
-        details[:teams] = teams
-        details[:remaining_students] = collect_remaining_students(students_by_gender)
-
+        # details[:teams] = teams
+        # details[:remaining_students] = collect_remaining_students(students_by_gender)
+        details[:teams3] = students_by_gender_ethnicity[0]
+        details[:teams4] = students_by_gender_ethnicity[1]
         # Update the section in the team_distribution
-        # team_distribution[section] = details
-        team_distribution[section] = students_by_gender_ethnicity
+        team_distribution[section] = details
+        # team_distribution[section] = students_by_gender_ethnicity
       end
       team_distribution
     end
 
-    def calculate_minorities(details, ethnicities, ethnicity_attribute)
+    def calculate_minorities(responses, ethnicities, ethnicity_attribute)
       ethnicity_counts = Hash.new(0)
       total_population = responses.size
       responses.each do |response|
@@ -378,7 +385,7 @@ class FormsController < ApplicationController
       [ minority_ethnicities, remaining_ethnicities ]
     end
 
-    def gender_ethnicity_populate(responses, categorized_students)
+    def gender_ethnicity_populate(responses, categorized_students, ethnicity_attribute, gender_attribute)
       responses.each do |response|
         ethnicity_value = response.responses[ethnicity_attribute.id.to_s]
         gender_value = response.responses[gender_attribute.id.to_s]
@@ -459,8 +466,8 @@ end
   end
 
   # Helper to initialize teams
-  def initialize_teams(total_teams)
-    Array.new(total_teams) { [] }
+  def initialize_teams(details)
+    [ Array.new(details[:teams_of_3]) { [] }, Array.new(details[:teams_of_4]) { [] } ]
   end
 
   # Helper to get the gender attribute from form responses
@@ -474,41 +481,59 @@ end
     form.form_attributes.find { |attr| attr.name.downcase == "ethnicity" }
   end
 
-  def populate_teams_by_gender_and_minority(teams, categorized_students, minorities, majorities, team_distribution)
-    # teams.each_with_index do |team, team_index|
+  def populate_teams_by_gender_and_minority(teams_3, teams_4, categorized_students, minorities, majorities)
+    remaining_students = []
+    all_teams = teams_3 + teams_4
     minorities.each do |minority|
-      teams.each_with_index do |team, team_index|
-        minority_teams = []
-        females = categorized_students[minority]["female"]
-        males = categorized_students[minority]["male"]
+      females = categorized_students[minority]["female"]
+      males = categorized_students[minority]["male"]
 
-        if females.size >= 2
-          # Take and remove the first two females from categorized_students
-          team << females.shift(2)
-          minority_teams << team_index
-          next
-        end
+      # Pair minority females
+      while females.size >= 2
+        available_team = all_teams.find { |team| team.size <= 2 }
+        break unless available_team
+        available_team.concat(females.shift(2))
+        puts available_team
+      end
+      # Handle odd minority female
+      if females.any?
+        available_team = all_teams.find { |team| team.size <= 1 }
+        if available_team
+          available_team << females.shift
 
-        if females.size == 1
-          selected_majority = majorities.sample
+          # Try to pair with non-minority female and minority male
+          selected_majority = majorities.first
           non_minority_female = categorized_students[selected_majority]["female"].shift
-          if non_minority_female
-            male_in_minority = males.shift if males.any?
-            if male_in_minority
-              # add 3 of them to a team
-              team << [ females.shift, non_minority_female, male_in_minority ].compact
-            else
-              # shift the non minority female back to the array
-              categorized_students[selected_majority]["female"].unshift(non_minority_female)
-            end
+
+          if non_minority_female && males.any?
+            available_team << non_minority_female
+            available_team << males.shift
           else
-            teams[minority_teams.sample] << females.shift
+            # If no non-minority female or minority male, add to a team with a pair of same minority females
+            categorized_students[selected_majority]["female"].unshift(non_minority_female) if non_minority_female
+            target_team = all_teams.find { |team| team.count { |student| categorized_students[minority]["female"].include?(student) } >= 2 }
+            target_team << females.shift if target_team
           end
+        else
+          # If no team with 0-1 members, add to a team with a pair of same minority females
+          target_team = all_teams.find { |team| team.count { |student| categorized_students[minority]["female"].include?(student) } >= 2 }
+          target_team << females.shift if target_team
         end
       end
+
+      # Add remaining males to the list of remaining students
+      remaining_students.concat(males)
     end
-    # end
+
+    # Add remaining males from majority groups to the list of remaining students
+    majorities.each do |majority|
+      remaining_students.concat(categorized_students[majority]["male"])
+    end
+
+    [ teams_3, teams_4 ]
   end
+
+
 
 
 
@@ -519,43 +544,45 @@ end
 
 
   # Helper to categorize students by gender and calculate weighted average scores
-  def categorize_students_by_gender(responses, gender_attribute)
-    categorized_students = initialize_categorized_students
+  def categorize_students_by_gender(responses, gender_attribute, ethnicity_attribute, genders, ethnicities)
+    categorized_students = initialize_categorized_students(genders, ethnicities)
     responses.each do |response|
-      categorize_student(response, gender_attribute, categorized_students)
+      categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students)
     end
-    sort_categorized_students(categorized_students)
+    # sort_categorized_students(categorized_students)
+    categorized_students
   end
 
   private
 
   def initialize_categorized_students(genders, ethnicities)
-    gender_ethnicity_division = outer_keys.each_with_object({}) do |outer_key, outer_map|
-      outer_map[outer_key] = inner_keys.each_with_object({}) do |inner_key, inner_map|
+    gender_ethnicity_division = ethnicities.each_with_object({}) do |outer_key, outer_map|
+      outer_map[outer_key] = genders.each_with_object({}) do |inner_key, inner_map|
         inner_map[inner_key] = []
       end
     end
     gender_ethnicity_division
   end
 
-  def categorize_student(response, gender_attribute, categorized_students)
+  def categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students)
     student = response.student
     gender_value = response.responses[gender_attribute.id.to_s]
-    return if gender_value.nil? || gender_value.strip.empty?
+    ethnicity_value = response.responses[ethnicity_attribute.id.to_s]
+    return if gender_value.nil? || gender_value.strip.empty? || ethnicity_value.nil? || ethnicity_value.strip.empty?
 
-    category = gender_category(gender_value)
-    weighted_average = calculate_weighted_average(response)
-    categorized_students[category] << { student: student, score: weighted_average } if category
+    # category = gender_category(gender_value)
+    weighted_average = 0.0
+    categorized_students[ethnicity_value][gender_value] << { student: student, score: weighted_average } if ethnicity_value && gender_value
   end
 
-  def gender_category(gender_value)
-    case gender_value.downcase
-    when "female" then :female
-    when "male" then :male
-    when "other" then :other
-    when "prefer not to say" then :prefer_not_to_say
-    end
-  end
+  # def gender_category(gender_value)
+  #   case gender_value.downcase
+  #   when "female" then :female
+  #   when "male" then :male
+  #   when "other" then :other
+  #   when "prefer not to say" then :prefer_not_to_say
+  #   end
+  # end
 
   def sort_categorized_students(categorized_students)
     categorized_students[:female].sort_by! { |s| -s[:score] }
