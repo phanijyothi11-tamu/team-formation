@@ -17,6 +17,7 @@ class AttributesController < ApplicationController
         end
 
         if @attribute.save
+            log_modification("created", @attribute)
             redirect_to edit_form_path(@form), notice: "Attribute was successfully added."
         else
             redirect_to edit_form_path(@form), alert: "Failed to add attribute."
@@ -36,6 +37,7 @@ class AttributesController < ApplicationController
     # Removes an attribute from a specific form
     def destroy
         if @attribute.destroy
+            log_modification("removed", @attribute)
             # If destruction is successful, redirect to the form's edit page with a success notice
             redirect_to edit_form_path(@form), notice: "Attribute was successfully removed."
         else
@@ -45,6 +47,19 @@ class AttributesController < ApplicationController
     end
 
     private
+
+    def log_modification(action, attribute)
+        @form = Form.find(params[:form_id])
+        modification_details = {
+            type: action,
+            details: "Attribute '#{attribute.name}' (ID: #{attribute.id})",
+            timestamp: Time.current
+        }
+
+        @form.modifications ||= {}
+        @form.modifications[Time.current.to_s] = modification_details
+        @form.save
+    end
 
     # This method finds the parent Form for the nested Attribute
     # It's called by the before_action at the top of the controller
@@ -111,6 +126,7 @@ class AttributesController < ApplicationController
 
     def update_and_redirect
         if @attribute.update(weightage_params)
+          log_modification("updated weightage", @attribute)
           redirect_to edit_form_path(@form), notice: "Weightage was successfully updated."
         end
     end
