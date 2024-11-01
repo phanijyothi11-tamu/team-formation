@@ -1,7 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/application_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -42,7 +42,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/attributes_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -196,7 +196,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_publishing.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_publishing.rb": {
         "lines": [
           1,
           1,
@@ -242,7 +242,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/form_responses_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -388,7 +388,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/forms_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -583,7 +583,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_deadline_management.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_deadline_management.rb": {
         "lines": [
           1,
           1,
@@ -604,7 +604,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_uploading.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_uploading.rb": {
         "lines": [
           1,
           1,
@@ -680,7 +680,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/populate_teams_based_on_gender.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/populate_teams_based_on_gender.rb": {
         "lines": [
           1,
           1,
@@ -865,7 +865,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/sessions_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -896,7 +896,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/students_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/students_controller.rb": {
         "lines": [
           1,
           1,
@@ -947,7 +947,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/users_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -963,7 +963,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/welcome_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -983,7 +983,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/jobs/check_form_deadlines_job.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/jobs/check_form_deadlines_job.rb": {
         "lines": [
           1,
           1,
@@ -996,7 +996,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/attribute.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -1054,14 +1054,14 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/application_record.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/form.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -1121,7 +1121,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/services/forms/duplication_service.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/services/forms/duplication_service.rb": {
         "lines": [
           1,
           1,
@@ -1164,7 +1164,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/services/forms/base_service.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/services/forms/base_service.rb": {
         "lines": [
           1,
           null,
@@ -1187,7 +1187,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/user.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -1195,7 +1195,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/student.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -1207,7 +1207,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/form_response.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form_response.rb": {
         "lines": [
           1,
           1,
@@ -1222,11 +1222,11 @@
         ]
       }
     },
-    "timestamp": 1730482778
+    "timestamp": 1730500830
   },
   "Cucumber": {
     "coverage": {
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/user.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -1234,14 +1234,14 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/application_record.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/form.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -1301,7 +1301,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/users_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -1317,7 +1317,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/application_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -1358,7 +1358,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/forms_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -1553,7 +1553,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_publishing.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_publishing.rb": {
         "lines": [
           1,
           1,
@@ -1599,7 +1599,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_deadline_management.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_deadline_management.rb": {
         "lines": [
           1,
           1,
@@ -1620,7 +1620,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/form_uploading.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_uploading.rb": {
         "lines": [
           1,
           1,
@@ -1696,7 +1696,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/concerns/populate_teams_based_on_gender.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/populate_teams_based_on_gender.rb": {
         "lines": [
           1,
           1,
@@ -1881,7 +1881,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/attribute.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -1939,7 +1939,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/attributes_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -2093,7 +2093,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/form_response.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form_response.rb": {
         "lines": [
           1,
           1,
@@ -2107,7 +2107,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/models/student.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -2119,7 +2119,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/students_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/students_controller.rb": {
         "lines": [
           1,
           1,
@@ -2170,7 +2170,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/sessions_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -2201,7 +2201,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/welcome_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -2221,7 +2221,7 @@
           null
         ]
       },
-      "/Users/hithamv/Desktop/SEProject/team-formation-13/app/controllers/form_responses_controller.rb": {
+      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -2368,6 +2368,6 @@
         ]
       }
     },
-    "timestamp": 1730482785
+    "timestamp": 1730500838
   }
 }
