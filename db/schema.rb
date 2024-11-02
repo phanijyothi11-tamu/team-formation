@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_16_225834) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_30_015930) do
   create_table "attributes", force: :cascade do |t|
     t.string "name"
     t.string "field_type"
@@ -55,6 +55,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_16_225834) do
     t.index ["uin"], name: "index_students_on_uin", unique: true
   end
 
+  create_table "teams", force: :cascade do |t|
+    t.integer "form_id", null: false
+    t.string "name"
+    t.json "members", default: "{}", null: false
+    t.string "section"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["form_id"], name: "index_teams_on_form_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "uin"
@@ -66,4 +76,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_16_225834) do
   add_foreign_key "form_responses", "forms"
   add_foreign_key "form_responses", "students"
   add_foreign_key "forms", "users"
+  add_foreign_key "teams", "forms"
 end

@@ -18,6 +18,9 @@ class Form < ApplicationRecord
   has_many :students, through: :form_responses, dependent: :destroy
   accepts_nested_attributes_for :form_attributes, allow_destroy: true
 
+  # Adding the teams association
+  has_many :teams, dependent: :destroy
+
   # Add the published field
   attribute :published, :boolean, default: false
 

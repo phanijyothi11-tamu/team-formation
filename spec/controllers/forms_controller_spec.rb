@@ -685,4 +685,141 @@ RSpec.describe FormsController, type: :controller do
       end
     end
   end
+  describe 'POST #generate_teams' do
+    let(:user) { create(:user) }
+    let(:form) { create(:form, user: user) }
+    let(:students) { create_list(:student, 8) }  # Create 8 students without specifying IDs
+    let(:team_distribution) do
+      {
+        'Section A' => {
+          teams: [
+            students[0..3].map(&:id),  # First team of 4
+            students[4..7].map(&:id)   # Second team of 4
+          ]
+        }
+      }
+    end
+
+    before do
+      allow(controller).to receive(:calculate_teams).and_return(team_distribution)
+      allow(controller).to receive(:populate_teams_based_on_gender).and_return(team_distribution)
+      allow(controller).to receive(:optimize_teams_based_on_ethnicity).and_return(team_distribution)
+      allow(controller).to receive(:distribute_remaining_students).and_return(team_distribution)
+      allow(controller).to receive(:optimize_team_by_swaps).and_return(team_distribution)
+
+      # Create form responses for each student
+      students.each do |student|
+        create(:form_response, form: form, student: student)
+      end
+    end
+
+    it 'generates teams successfully' do
+      expect {
+        post :generate_teams, params: { id: form.id }
+      }.to change(Team, :count).by(2)
+
+      expect(response).to redirect_to(view_teams_form_path(form))
+      expect(flash[:notice]).to eq("Teams have been successfully generated!")
+    end
+
+    it 'calls populate_teams_based_on_gender' do
+      expect(controller).to receive(:populate_teams_based_on_gender).and_return(team_distribution)
+      post :generate_teams, params: { id: form.id }
+    end
+
+    it 'creates teams with correct attributes' do
+      post :generate_teams, params: { id: form.id }
+
+      created_teams = form.teams.reload
+      expect(created_teams.count).to eq(2)
+      expect(created_teams.first.name).to eq("Team 1")
+      expect(created_teams.first.section).to eq("Section A")
+      expect(created_teams.first.members).to be_an(Array)
+      expect(created_teams.first.members.count).to eq(4)
+    end
+
+    it 'handles errors during team generation' do
+      allow(controller).to receive(:calculate_teams).and_raise(StandardError, "Test error")
+
+      expect {
+        post :generate_teams, params: { id: form.id }
+      }.to raise_error(StandardError, "Test error")
+
+      expect(Team.count).to eq(0)
+    end
+  end
+  describe "GET #export_teams" do
+    let(:form_with_teams) { create(:form, user: user) }
+    let!(:team) { create(:team, form: form_with_teams) }
+
+    before do
+      allow(controller).to receive(:current_user).and_return(user)
+    end
+
+    context "when there are teams to export" do
+      it "exports teams in Excel format" do
+        get :export_teams, params: { id: form_with_teams.id, format: :xlsx }
+        expect(response.content_type).to eq('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        expect(response.headers['Content-Disposition']).to include('attachment; filename="teams.xlsx"')
+      end
+
+      it "exports teams in CSV format" do
+        get :export_teams, params: { id: form_with_teams.id, format: :csv }
+        expect(response.content_type).to eq('text/csv')
+        expect(response.headers['Content-Disposition']).to include('attachment; filename="teams-')
+      end
+
+      it "exports teams in PDF format" do
+        get :export_teams, params: { id: form_with_teams.id, format: :pdf }
+        expect(response.content_type).to eq('application/pdf')
+        expect(response.headers['Content-Disposition']).to include('attachment; filename="teams-')
+      end
+    end
+
+    context "when there are no teams to export" do
+      let(:form_without_teams) { create(:form, user: user) }
+
+      it "redirects to view teams page with an alert" do
+        get :export_teams, params: { id: form_without_teams.id, format: :xlsx }
+        expect(response).to redirect_to(view_teams_form_path(form_without_teams))
+        expect(flash[:alert]).to eq('No teams available for export.')
+      end
+    end
+  end
+
+  describe "#generate_csv" do
+    let(:user) { create(:user) }
+    let(:form) { create(:form, user: user) }
+    let(:team) { create(:team, form: form, name: "Team 1", section: "Section A") }
+    let!(:student) { create(:student) }
+
+    before do
+      @member_data = {
+        "id" => student.id,
+        "name" => student.name,
+        "uin" => student.uin,
+        "email" => student.email
+      }
+      team.members = [ @member_data ]
+      team.save!
+
+      # Force reloading to ensure data is persisted
+      @team = team.reload
+    end
+
+    it "generates a CSV with correct headers and data structure" do
+      csv_data = controller.send(:generate_csv, [ @team ])
+      csv_lines = csv_data.split("\n")
+
+      expect(csv_lines[0]).to eq("Section,Team Name,Student Name,UIN,Email")
+
+      data_line = CSV.parse(csv_lines[1]).first
+
+      expect(data_line[0]).to eq("Section A")
+      expect(data_line[1]).to eq("Team 1")
+      expect(data_line[2]).to eq(@member_data["name"])
+      expect(data_line[3]).to eq(@member_data["uin"])
+      expect(data_line[4]).to eq(@member_data["email"])
+    end
+end
 end

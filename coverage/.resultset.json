@@ -1,7 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/application_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -28,12 +28,12 @@
           1,
           null,
           null,
-          124,
+          132,
           null,
           null,
           null,
           1,
-          125,
+          133,
           null,
           null,
           2,
@@ -42,7 +42,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/attributes_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -196,7 +196,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_publishing.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_publishing.rb": {
         "lines": [
           1,
           1,
@@ -242,7 +242,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/form_responses_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -388,7 +388,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/forms_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -400,8 +400,11 @@
           1,
           1,
           1,
+          1,
+          1,
           null,
           null,
+          1,
           1,
           null,
           null,
@@ -497,10 +500,13 @@
           null,
           null,
           1,
+          0,
+          null,
+          1,
           null,
           null,
           1,
-          25,
+          29,
           null,
           null,
           null,
@@ -560,6 +566,44 @@
           null,
           null,
           null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          1,
+          6,
+          null,
+          6,
+          6,
+          null,
+          24,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          6,
+          null,
+          null,
+          null,
           1,
           25,
           50,
@@ -583,7 +627,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_deadline_management.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_deadline_management.rb": {
         "lines": [
           1,
           1,
@@ -604,7 +648,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_uploading.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_uploading.rb": {
         "lines": [
           1,
           1,
@@ -680,7 +724,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/populate_teams_based_on_gender.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/populate_teams_based_on_gender.rb": {
         "lines": [
           1,
           1,
@@ -865,7 +909,101 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/sessions_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/generate_teams.rb": {
+        "lines": [
+          1,
+          1,
+          null,
+          1,
+          4,
+          null,
+          4,
+          4,
+          3,
+          3,
+          null,
+          1,
+          null,
+          null,
+          null,
+          null,
+          1,
+          4,
+          3,
+          3,
+          3,
+          3,
+          null,
+          null,
+          1,
+          3,
+          3,
+          null,
+          null,
+          null,
+          1,
+          3,
+          6,
+          6,
+          null,
+          6,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/export_teams.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          4,
+          4,
+          null,
+          4,
+          1,
+          1,
+          1,
+          null,
+          null,
+          3,
+          3,
+          1,
+          1,
+          null,
+          3,
+          1,
+          null,
+          3,
+          1,
+          null,
+          null,
+          null,
+          1,
+          1,
+          2,
+          2,
+          null,
+          2,
+          2,
+          4,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "/home/phanijyothi11/team-formation-9/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -896,58 +1034,58 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/students_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/students_controller.rb": {
         "lines": [
           1,
           1,
           null,
           1,
-          0,
+          1,
           null,
           null,
           1,
-          5,
-          5,
-          5,
+          2,
+          2,
+          2,
           null,
-          5,
-          null,
-          null,
-          1,
-          0,
+          2,
           null,
           null,
           1,
-          0,
-          0,
-          0,
-          null,
-          0,
-          null,
+          1,
           null,
           null,
           1,
-          0,
-          null,
+          2,
+          2,
+          1,
           null,
           1,
-          0,
-          0,
-          0,
-          null,
-          0,
           null,
           null,
           null,
           1,
+          1,
+          null,
           null,
           1,
-          0,
+          2,
+          2,
+          1,
+          null,
+          1,
+          null,
+          null,
+          null,
+          1,
+          null,
+          1,
+          4,
           null,
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/users_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -963,7 +1101,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/welcome_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -983,7 +1121,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/jobs/check_form_deadlines_job.rb": {
+      "/home/phanijyothi11/team-formation-9/app/jobs/check_form_deadlines_job.rb": {
         "lines": [
           1,
           1,
@@ -996,7 +1134,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/attribute.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -1054,14 +1192,14 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/application_record.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -1081,6 +1219,9 @@
           null,
           1,
           1,
+          1,
+          null,
+          null,
           1,
           null,
           null,
@@ -1114,14 +1255,14 @@
           1,
           null,
           1,
-          213,
+          209,
           3,
           null,
           null,
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/services/forms/duplication_service.rb": {
+      "/home/phanijyothi11/team-formation-9/app/services/forms/duplication_service.rb": {
         "lines": [
           1,
           1,
@@ -1164,7 +1305,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/services/forms/base_service.rb": {
+      "/home/phanijyothi11/team-formation-9/app/services/forms/base_service.rb": {
         "lines": [
           1,
           null,
@@ -1187,7 +1328,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/user.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -1195,7 +1336,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/student.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -1207,7 +1348,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form_response.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/form_response.rb": {
         "lines": [
           1,
           1,
@@ -1218,15 +1359,54 @@
           1,
           null,
           1,
+          null
+        ]
+      },
+      "/home/phanijyothi11/team-formation-9/app/models/team.rb": {
+        "lines": [
+          1,
+          1,
+          null,
+          1,
+          1,
+          1,
+          null,
+          null,
+          1,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
           null
         ]
       }
     },
-    "timestamp": 1730500830
+    "timestamp": 1730517348
   },
   "Cucumber": {
     "coverage": {
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/user.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -1234,14 +1414,14 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/application_record.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -1261,6 +1441,9 @@
           null,
           1,
           1,
+          1,
+          null,
+          null,
           1,
           null,
           null,
@@ -1301,7 +1484,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/users_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -1317,7 +1500,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/application_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -1358,7 +1541,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/forms_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -1370,8 +1553,11 @@
           1,
           1,
           1,
+          1,
+          1,
           null,
           null,
+          1,
           1,
           null,
           null,
@@ -1465,6 +1651,9 @@
           0,
           null,
           null,
+          null,
+          1,
+          0,
           null,
           1,
           null,
@@ -1530,6 +1719,44 @@
           null,
           null,
           null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          null,
+          1,
+          null,
+          0,
+          null,
+          1,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          null,
+          null,
+          null,
           1,
           0,
           0,
@@ -1553,7 +1780,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_publishing.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_publishing.rb": {
         "lines": [
           1,
           1,
@@ -1599,7 +1826,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_deadline_management.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_deadline_management.rb": {
         "lines": [
           1,
           1,
@@ -1620,7 +1847,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/form_uploading.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_uploading.rb": {
         "lines": [
           1,
           1,
@@ -1696,7 +1923,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/concerns/populate_teams_based_on_gender.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/populate_teams_based_on_gender.rb": {
         "lines": [
           1,
           1,
@@ -1881,7 +2108,101 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/attribute.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/generate_teams.rb": {
+        "lines": [
+          1,
+          1,
+          null,
+          1,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null
+        ]
+      },
+      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/export_teams.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          1,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "/home/phanijyothi11/team-formation-9/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -1939,7 +2260,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/attributes_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -2093,7 +2414,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/form_response.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/form_response.rb": {
         "lines": [
           1,
           1,
@@ -2107,7 +2428,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/models/student.rb": {
+      "/home/phanijyothi11/team-formation-9/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -2119,7 +2440,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/students_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/students_controller.rb": {
         "lines": [
           1,
           1,
@@ -2170,7 +2491,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/sessions_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -2201,7 +2522,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/welcome_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -2221,7 +2542,7 @@
           null
         ]
       },
-      "/Users/ramyagotika/fall_2024/csce_606/Team_Formation_Project/team-formation/app/controllers/form_responses_controller.rb": {
+      "/home/phanijyothi11/team-formation-9/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -2368,6 +2689,6 @@
         ]
       }
     },
-    "timestamp": 1730500838
+    "timestamp": 1730517367
   }
 }

@@ -108,3 +108,8 @@ group :development, :test do
 end
 
 gem "rufus-scheduler"
+gem "rubyzip"
+gem "axlsx"
+gem "caxlsx_rails"
+gem "wicked_pdf"
+gem "wkhtmltopdf-binary"

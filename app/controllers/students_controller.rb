@@ -6,7 +6,7 @@ class StudentsController < ApplicationController
   end
 
   def show
-    @student = Student.find(params[:id])
+    @student = Student.find(params[:uin])
     @form_responses = @student.form_responses.includes(:form)
     @published_forms = @form_responses.map(&:form).select(&:published?).uniq
     # Add this line for debugging

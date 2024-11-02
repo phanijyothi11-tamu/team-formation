@@ -7,10 +7,13 @@ class FormsController < ApplicationController
   include FormDeadlineManagement
   include FormUploading
   include PopulateTeamsBasedOnGender
+  include GenerateTeams
+  include ExportTeams
   require "roo"
 
   # Set @form instance variable for show, edit, update, and destroy actions
-  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close ]
+  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close generate_teams view_teams]
+  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close generate_teams view_teams]
 
   # GET /forms
   def index
@@ -103,7 +106,10 @@ class FormsController < ApplicationController
       format.json { head :no_content }
     end
   end
-
+  # GET /forms/1/view_teams
+  def view_teams
+    @teams = @form.teams
+  end
   private
     # Sets @form instance variable based on the id parameter
     # Only finds forms belonging to the current user for security
@@ -165,6 +171,44 @@ class FormsController < ApplicationController
       # Return the complete team distribution hash
       # This hash contains the team distribution data for all sections
       team_distribution
+    end
+    # def populate_teams_based_on_gender(team_distribution)
+    #   # Dummy function: Just return the input for now
+    #   team_distribution.each do |section, details|
+    #     details[:teams] = Array.new(details[:total_teams]) { [] }
+    #     details[:remaining_students] = details[:form_responses].map(&:student)
+    #   end
+    #   team_distribution
+    # end
+
+    def optimize_teams_based_on_ethnicity(team_distribution)
+      # Dummy function: Just return the input for now
+      team_distribution
+    end
+
+    def distribute_remaining_students(team_distribution)
+      # Dummy function: Distribute remaining students randomly
+      team_distribution
+    end
+
+    def optimize_team_by_swaps(team_distribution)
+      # Dummy function: Just return the input for now
+      team_distribution
+    end
+    def format_team_members(team_members_ids)
+      return [] if team_members_ids.blank?
+
+      students = Student.where(id: team_members_ids)
+      formatted_members = students.map do |student|
+        {
+          id: student.id,
+          name: student.name,
+          uin: student.uin,
+          email: student.email
+        }
+      end
+
+      formatted_members.presence || []
     end
 
     # Helper method to calculate the weighted average score for a student
