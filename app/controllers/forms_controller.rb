@@ -153,15 +153,17 @@ class FormsController < ApplicationController
   # DELETE /forms/1
   # Deletes a specific form
   def destroy
-    @form.destroy!
+    @form = Form.find(params[:id]) # Retrieve the form first
+
+    @form.destroy! # Use destroy! to raise an error if destruction fails
 
     log_modification("Destroy", "Form #{@form.id} was destroyed.")
     respond_to do |format|
-      # Redirect to user's show page after successful deletion
       format.html { redirect_to user_path(current_user), status: :see_other, notice: "Form was successfully destroyed." }
       format.json { head :no_content }
     end
   end
+
 
   def show_modifications
     @form = Form.find(params[:id])
@@ -197,15 +199,20 @@ class FormsController < ApplicationController
   end
 
   private
-
     def log_modification(modification_type, details)
-      # Initialize modifications if not already set
-      @form.modifications ||= {}
-      @form.modifications[Time.current] = { type: modification_type, details: details }
+      # Create a mutable copy of @form if it’s frozen
+      form_copy = @form.frozen? ? @form.dup : @form
 
-      # Save the modifications back to the form
-      @form.save
+      # Modify the modifications on the copied object
+      form_copy.modifications ||= {}
+      form_copy.modifications[Time.current] = { type: modification_type, details: details }
+
+      # Save the modifications back
+      form_copy.save
     end
+
+
+
 
     def publish_form
       if @form.update(published: true)

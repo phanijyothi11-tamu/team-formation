@@ -36,52 +36,51 @@ Given("I log in as a professor") do
     expect(page).to have_content(@student.id.to_s) # Ensure the student ID is displayed
     expect(page).to have_content("Ans1") # Check that the response is displayed
   end
-  
+
   Given("I have created a form that is not published") do
-    @form = FactoryBot.create(:form, 
-      user: @user, 
+    @form = FactoryBot.create(:form,
+      user: @user,
       published: false,
       name: "Test Form",
       description: "This is a test form"
     )
   end
-  
+
   Given("I have created a form that is published") do
-    @form = FactoryBot.create(:form, 
-      user: @user, 
+    @form = FactoryBot.create(:form,
+      user: @user,
       published: true,
       name: "Test Form",
       description: "This is a test form"
     )
   end
-  
+
   When("I visit my user profile page") do
     visit user_path(@user)
   end
-  
+
   Then("I should not see {string} for that form") do |button_text|
     within('tr', text: @form.name) do
       expect(page).not_to have_content(button_text)
     end
   end
-  
+
   Then("I should see {string} and {string} buttons for that form") do |button1, button2|
     within('tr', text: @form.name) do
       expect(page).to have_content(button1)
       expect(page).to have_content(button2)
     end
   end
-  
+
   Then("I should not see {string} or {string} buttons for that form") do |button1, button2|
     within('tr', text: @form.name) do
       expect(page).not_to have_content(button1)
       expect(page).not_to have_content(button2)
     end
   end
-  
+
   Then("I should see {string} for that form") do |button_text|
     within('tr', text: @form.name) do
       expect(page).to have_content(button_text)
     end
   end
-  
