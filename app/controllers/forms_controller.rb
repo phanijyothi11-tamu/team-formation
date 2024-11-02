@@ -340,9 +340,10 @@ class FormsController < ApplicationController
         @form = Form.find(details[:form_responses].first.form_id)
         gender_attribute = get_gender_attribute(details[:form_responses])
         ethnicity_attribute = get_ethnicity_attribute(details[:form_responses])
+        scale_attributes = get_scale_attributes(details[:form_responses])
         genders = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "gender").limit(1).pluck(:options).first.to_s.split(",")
         ethnicities = Attribute.where(form_id: @form.id, field_type: "mcq").where("LOWER(name) = ?", "ethnicity").limit(1).pluck(:options).first.to_s.split(",")
-        categorized_students = categorize_students_by_gender(details[:form_responses], gender_attribute, ethnicity_attribute, genders, ethnicities)
+        categorized_students = categorize_students_by_gender(details[:form_responses], gender_attribute, ethnicity_attribute, genders, ethnicities, scale_attributes)
 
         # populate based on gender and ethnicity
         # gender_ethnicity_populate(details[:form_responses], categorized_students, ethnicity_attribute, gender_attribute)
@@ -481,27 +482,29 @@ end
     form.form_attributes.find { |attr| attr.name.downcase == "ethnicity" }
   end
 
+  def get_scale_attributes(responses)
+    form = Form.find(responses.first.form_id)
+    form.form_attributes.find_all { |attr| attr.field_type == "scale" }
+  end
+
   def populate_teams_by_gender_and_minority(teams_3, teams_4, categorized_students, minorities, majorities)
-    remaining_students = []
     all_teams = teams_3 + teams_4
+
+    # Fill all the minority females into teams
     minorities.each do |minority|
       females = categorized_students[minority]["female"]
       males = categorized_students[minority]["male"]
 
-      # Pair minority females
       while females.size >= 2
-        available_team = all_teams.find { |team| team.size <= 2 }
+        available_team = all_teams.find { |team| team.size < (team == teams_4 ? 4 : 3) }
         break unless available_team
         available_team.concat(females.shift(2))
-        puts available_team
       end
-      # Handle odd minority female
+
       if females.any?
-        available_team = all_teams.find { |team| team.size <= 1 }
+        available_team = all_teams.find { |team| team.size < (team == teams_4 ? 4 : 3) - 1 }
         if available_team
           available_team << females.shift
-
-          # Try to pair with non-minority female and minority male
           selected_majority = majorities.first
           non_minority_female = categorized_students[selected_majority]["female"].shift
 
@@ -509,28 +512,84 @@ end
             available_team << non_minority_female
             available_team << males.shift
           else
-            # If no non-minority female or minority male, add to a team with a pair of same minority females
             categorized_students[selected_majority]["female"].unshift(non_minority_female) if non_minority_female
             target_team = all_teams.find { |team| team.count { |student| categorized_students[minority]["female"].include?(student) } >= 2 }
-            target_team << females.shift if target_team
+            target_team << females.shift if target_team && target_team.size < (target_team == teams_4 ? 4 : 3)
           end
         else
-          # If no team with 0-1 members, add to a team with a pair of same minority females
           target_team = all_teams.find { |team| team.count { |student| categorized_students[minority]["female"].include?(student) } >= 2 }
-          target_team << females.shift if target_team
+          target_team << females.shift if target_team && target_team.size < (target_team == teams_4 ? 4 : 3)
         end
       end
-
-      # Add remaining males to the list of remaining students
-      remaining_students.concat(males)
     end
 
-    # Add remaining males from majority groups to the list of remaining students
+    # Fill all remaining females into teams
     majorities.each do |majority|
-      remaining_students.concat(categorized_students[majority]["male"])
+      females = categorized_students[majority]["female"]
+
+      while females.any?
+        available_team = all_teams.find do |team|
+          (team.count { |student| student[:gender] == "female" } == 0 || team.size < (team == teams_4 ? 4 : 3)) &&
+          team.size < (team == teams_4 ? 4 : 3)
+        end
+
+        break unless available_team
+
+        if available_team.count { |student| student[:gender] == "female" } == 0 && females.size >= 2
+          available_team.concat(females.shift(2))
+        elsif females.size == 1 && available_team.size < (available_team == teams_4 ? 4 : 3) - 1
+          available_team << females.shift
+          male = categorized_students[majority]["male"].shift
+          available_team << male if male && available_team.size < (available_team == teams_4 ? 4 : 3)
+        else
+          break
+        end
+      end
     end
+
+    ensure_no_single_female(all_teams)
+
+    remaining_students = []
+    (minorities + majorities).each do |ethnicity|
+      remaining_students.concat(categorized_students[ethnicity]["female"])
+      remaining_students.concat(categorized_students[ethnicity]["male"])
+    end
+
+    remaining_students.sort_by! { |student| -student[:score] }
+    all_teams.sort_by! do |team|
+      team.sum { |student| student.is_a?(Hash) ? (student[:score] || 0) : 0 }
+    end
+
+    remaining_students.each do |student|
+      target_team = all_teams.find { |team| team.size < (team == teams_4 ? 4 : 3) }
+      break unless target_team
+      target_team << student
+      all_teams.sort_by! { |team| team.sum { |s| s[:score] } }
+    end
+
+    # ensuring no female left solo in a team
+    ensure_no_single_female(all_teams)
 
     [ teams_3, teams_4 ]
+  end
+
+  def ensure_no_single_female(teams)
+    teams.each do |team|
+      next unless team.count { |s| s[:gender] == "female" } == 1
+
+      other_team = teams.find do |t|
+        t != team && t.count { |s| s[:gender] == "female" } >= 2 && t.size < (t.include?(t) ? t.size : t.size)
+      end
+
+      if other_team
+        female = team.find { |s| s[:gender] == "female" }
+        male = other_team.find { |s| s[:gender] == "male" }
+        team.delete(female)
+        other_team.delete(male)
+        team << male if male && team.size < (team.include?(team) ? team.size : team.size)
+        other_team << female if female && other_team.size < (other_team.include?(other_team) ? other_team.size : other_team.size)
+      end
+    end
   end
 
 
@@ -544,10 +603,10 @@ end
 
 
   # Helper to categorize students by gender and calculate weighted average scores
-  def categorize_students_by_gender(responses, gender_attribute, ethnicity_attribute, genders, ethnicities)
+  def categorize_students_by_gender(responses, gender_attribute, ethnicity_attribute, genders, ethnicities, scale_attributes)
     categorized_students = initialize_categorized_students(genders, ethnicities)
     responses.each do |response|
-      categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students)
+      categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students, scale_attributes)
     end
     # sort_categorized_students(categorized_students)
     categorized_students
@@ -564,7 +623,7 @@ end
     gender_ethnicity_division
   end
 
-  def categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students)
+  def categorize_student(response, gender_attribute, ethnicity_attribute, categorized_students, scale_attributes)
     student = response.student
     gender_value = response.responses[gender_attribute.id.to_s]
     ethnicity_value = response.responses[ethnicity_attribute.id.to_s]
@@ -572,7 +631,16 @@ end
 
     # category = gender_category(gender_value)
     weighted_average = 0.0
-    categorized_students[ethnicity_value][gender_value] << { student: student, score: weighted_average } if ethnicity_value && gender_value
+    total_weightage = 0.0
+    scale_attributes.each do |attribute|
+      minval = attribute.min_value
+      maxval = attribute.max_value
+      response_value = response.responses[attribute.id.to_s].to_f
+      weightage = attribute.weightage ? attribute.weightage : 0
+      total_weightage += weightage
+      weighted_average += ((response_value - minval) / (maxval - minval) * weightage) if response_value
+    end
+    categorized_students[ethnicity_value][gender_value] << { student: student, score: weighted_average/total_weightage } if ethnicity_value && gender_value
   end
 
   # def gender_category(gender_value)
