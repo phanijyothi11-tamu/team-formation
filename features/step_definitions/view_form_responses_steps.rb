@@ -41,18 +41,32 @@ Given("I log in as a professor") do
     @form = FactoryBot.create(:form,
       user: @user,
       published: false,
-      name: "Test Form",
+      name: "Test Form #{Time.current.to_i}",
       description: "This is a test form"
     )
+    @form.form_attributes.create!(
+      name: "Question 1",
+      field_type: 'text_input',
+      weightage: 1
+    )
+    step "students with IDs 1 and 2 have access to the form"
+    step "the deadline is set"
   end
 
   Given("I have created a form that is published") do
     @form = FactoryBot.create(:form,
       user: @user,
       published: true,
-      name: "Test Form",
+      name: "Test Form #{Time.current.to_i}",
       description: "This is a test form"
     )
+    @form.form_attributes.create!(
+      name: "Question 1",
+      field_type: 'text_input',
+      weightage: 1
+    )
+    step "students with IDs 1 and 2 have access to the form"
+    step "the deadline is set"
   end
 
   When("I visit my user profile page") do

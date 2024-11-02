@@ -15,7 +15,9 @@ Rails.application.routes.draw do
       post "close"
       get "upload", to: "forms#upload", as: :upload
       post "validate_upload", to: "forms#validate_upload"
-      get "modifications", to: "forms#show_modifications", as: :modifications
+      post :generate_teams
+      get :view_teams
+      get :export_teams
     end
     resources :attributes do
       member do

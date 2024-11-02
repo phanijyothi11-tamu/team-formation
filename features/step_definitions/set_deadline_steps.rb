@@ -28,7 +28,13 @@ end
 
 
 Given("I have created a form with a set deadline") do
-  @form = Form.create!(name: "Test Form with Deadline", description: "Form Description", deadline: Time.now + 1.day, user: @user)
+  future_time = Time.current + 1.day
+  @form = Form.create!(
+    name: "Test Form with Deadline",
+    description: "Form Description",
+    deadline: future_time,
+    user: @user
+  )
 end
 
 
@@ -57,9 +63,12 @@ end
 # Step definition for selecting a new future deadline
 When("I select a new future deadline for {string}") do |form_name|
   form = Form.find_by(name: form_name)
+  future_time = Time.current + 2.days
   within("#deadline-picker-#{form.id}") do
-    fill_in "updated_deadline_#{form.id}", with: (Time.current + 2.days).strftime('%Y-%m-%dT%H:%M')
+    fill_in "updated_deadline_#{form.id}", with: future_time.strftime('%Y-%m-%dT%H:%M')
   end
+  # Store the time for later comparison
+  @expected_time = future_time
 end
 
 # Step definition for clicking the Save button to save the updated deadline
@@ -80,13 +89,16 @@ Then("I should see the updated deadline on the user home page for {string}") do 
   within('table.table-striped') do
     row = find('tr', text: form_name)
     within(row) do
-      expect(page).to have_content((Time.current + 2.days).strftime("%B %d, %Y %H:%M"))
+      expected_format = @expected_time.in_time_zone('America/Chicago')
+                                    .strftime("%B %d, %Y at %I:%M %p %Z")
+      expect(page).to have_content(expected_format)
     end
   end
 end
 
 When("I set the deadline to a past date and time") do
-  fill_in "deadline_picker", with: (Time.now - 1.day).strftime("%Y-%m-%dT%H:%M")
+  past_time = Time.current - 1.day
+  fill_in "deadline_picker", with: past_time.strftime("%Y-%m-%dT%H:%M")
 end
 
 
@@ -97,4 +109,12 @@ end
 Then("the form should not be saved") do
   @form.reload
   expect(@form.deadline).to be_nil
+end
+
+# Add this modified version of the deadline setting step
+When("I set the deadline to {int} seconds from now") do |seconds|
+  future_time = Time.current + seconds.seconds
+  visit edit_form_path(@form)
+  fill_in 'deadline_picker', with: future_time.strftime('%Y-%m-%dT%H:%M')
+  click_button 'Save Form'
 end

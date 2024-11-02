@@ -98,3 +98,7 @@ After do
     Form.connection.execute("INSERT INTO forms (id, name, description, created_at, updated_at) VALUES (#{@preserved_form.id}, '#{@preserved_form.name}', '#{@preserved_form.description}', '#{@preserved_form.created_at}', '#{@preserved_form.updated_at}')")
   end
 end
+
+Before do
+  Capybara.default_max_wait_time = 10
+end

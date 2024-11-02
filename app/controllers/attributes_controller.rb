@@ -8,19 +8,12 @@ class AttributesController < ApplicationController
     # POST /forms/:form_id/attributes
     # Creates a new attribute for a specific form
     def create
-        @form = Form.find(params[:form_id])
-        @attribute = @form.form_attributes.build(attribute_params)
-
-        if params[:attribute][:field_type] == "mcq"
-            mcq_options = params[:mcq_options].reject(&:blank?)
-            @attribute.options = mcq_options.join(",") unless mcq_options.empty?
-        end
+        @attribute = build_attribute
 
         if @attribute.save
-            log_modification("created", @attribute)
-            redirect_to edit_form_path(@form), notice: "Attribute was successfully added."
+            redirect_to_form_with_notice("Attribute was successfully added.")
         else
-            redirect_to edit_form_path(@form), alert: "Failed to add attribute."
+            redirect_to_form_with_alert("Failed to add attribute.")
         end
     end
 
@@ -145,5 +138,28 @@ class AttributesController < ApplicationController
 
     def valid_weightage?(value)
         value.between?(0.0, 1.0)
+    end
+
+    def build_attribute
+        @form.form_attributes.build(attribute_params).tap do |attr|
+            set_mcq_options(attr) if mcq_field?
+        end
+    end
+
+    def mcq_field?
+        params[:attribute][:field_type] == "mcq"
+    end
+
+    def set_mcq_options(attribute)
+        mcq_options = params[:mcq_options].reject(&:blank?)
+        attribute.options = mcq_options.join(",") unless mcq_options.empty?
+    end
+
+    def redirect_to_form_with_notice(message)
+        redirect_to edit_form_path(@form), notice: message
+    end
+
+    def redirect_to_form_with_alert(message)
+        redirect_to edit_form_path(@form), alert: message
     end
 end

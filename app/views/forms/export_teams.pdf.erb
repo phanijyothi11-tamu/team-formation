@@ -1,0 +1,27 @@
+<h1>Teams for <%= @form.name %></h1>
+
+<% @teams.group_by(&:section).each do |section, section_teams| %>
+  <h2>Section: <%= section %></h2>
+  
+  <% section_teams.each do |team| %>
+    <h3><%= team.name %></h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>UIN</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% team.members.each do |member| %>
+          <tr>
+            <td><%= member["name"] %></td>
+            <td><%= member["uin"] %></td>
+            <td><%= member["email"] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

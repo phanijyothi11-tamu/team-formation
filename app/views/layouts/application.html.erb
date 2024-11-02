@@ -41,8 +41,25 @@
           }
         }
 
-        // Set timeout to remove flash messages after 2 seconds
-        setTimeout(removeFlashMessages, 2000);
+        // Set timeout to remove flash messages after 3 seconds
+        setTimeout(removeFlashMessages, 3000);
+
+        // Update timestamp display
+        document.querySelectorAll('.deadline').forEach(function(element) {
+          const timestamp = element.getAttribute('data-timestamp');
+          if (timestamp) {
+            const date = new Date(timestamp);
+            const options = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZoneName: 'short'
+            };
+            element.textContent = date.toLocaleString('en-US', options);
+          }
+        });
       });
     </script>
   </body>

@@ -2,7 +2,7 @@
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
-# Prevent database truncation if the environment is production
+# Prevent database truncation if the environment is running in production mode
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 require 'factory_bot_rails'
@@ -72,6 +72,8 @@ RSpec.configure do |config|
   config.include Rails::Controller::Testing::TestProcess
   config.include Rails::Controller::Testing::TemplateAssertions
   config.include Rails::Controller::Testing::Integration
+
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)

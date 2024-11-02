@@ -16,7 +16,16 @@
       <li>
         <h3><%= form.name %></h3>
         <p><%= form.description %></p>
-        <p><strong>Deadline:</strong> <%= form.deadline ? form.deadline.strftime("%B %d, %Y at %I:%M %p") : "No deadline set" %></p>
+        <p>
+          <strong>Deadline:</strong>
+          <% if form.deadline %>
+            <span class="deadline">
+              <%= format_deadline(form.deadline).html_safe %>
+            </span>
+          <% else %>
+            No deadline set
+          <% end %>
+        </p>
         <%= link_to "View/Respond to Form", edit_form_response_path(form_response), class: "btn btn-primary" %>
       </li>
     <% end %>
@@ -24,4 +33,5 @@
 <% else %>
   <p>No forms available at this time.</p>
 <% end %>
+
 <%= link_to "Logout", logout_path, method: :delete, class: "btn btn-danger" %>

@@ -1,0 +1,11 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Teams") do |sheet|
+  sheet.add_row [ "Section", "Team Name", "Student Name", "UIN", "Email" ]
+
+  @teams.each do |team|
+    team.members.each do |member|
+      sheet.add_row [ team.section, team.name, member["name"], member["uin"], member["email"] ]
+    end
+  end
+end

@@ -106,3 +106,10 @@ group :development, :test do
   gem "rubocop"
   gem "rubocop-rspec"
 end
+
+gem "rufus-scheduler"
+gem "rubyzip"
+gem "axlsx"
+gem "caxlsx_rails"
+gem "wicked_pdf"
+gem "wkhtmltopdf-binary"

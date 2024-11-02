@@ -23,7 +23,15 @@
           <tr>
             <td><%= form.name %></td>
             <td><%= form.description %></td>
-            <td><%= form.deadline.present? ? form.deadline.strftime("%B %d, %Y %H:%M") : "No deadline set" %></td>
+            <td>
+              <% if form.deadline %>
+                <span class="deadline">
+                  <%= format_deadline(form.deadline).html_safe %>
+                </span>
+              <% else %>
+                No deadline set
+              <% end %>
+            </td>
             <td>
               <% if form.published? %>
                 <span class="badge bg-success">Published</span>
@@ -59,10 +67,11 @@
   <% end %>
 
   <%= link_to "Logout", logout_path, class: "btn btn-secondary mt-3 logout-btn mt-3" %>
-</div>
+
   <script>
-  function toggleDeadlinePicker(formId) {
-    var picker = document.getElementById("deadline-picker-" + formId);
-    picker.style.display = picker.style.display === "none" ? "block" : "none";
-  }
+    function toggleDeadlinePicker(formId) {
+      var picker = document.getElementById("deadline-picker-" + formId);
+      picker.style.display = picker.style.display === "none" ? "block" : "none";
+    }
   </script>
+</div>

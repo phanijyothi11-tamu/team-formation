@@ -3,10 +3,17 @@
 
 class FormsController < ApplicationController
   include FormsHelper
+  include FormPublishing
+  include FormDeadlineManagement
+  include FormUploading
+  include PopulateTeamsBasedOnGender
+  include GenerateTeams
+  include ExportTeams
   require "roo"
 
   # Set @form instance variable for show, edit, update, and destroy actions
-  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close ]
+  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close generate_teams view_teams]
+  before_action :set_form, only: %i[ show edit update destroy update_deadline publish close generate_teams view_teams]
 
   # GET /forms
   def index
@@ -80,74 +87,14 @@ class FormsController < ApplicationController
   # opens new /forms/#new_id/edit
   def duplicate
     original_form = Form.find(params[:id])
-    duplicated_form = original_form.dup
+    result = Forms::DuplicationService.call(original_form)
 
-    # Suggest a new name for the duplicated form
-    duplicated_form.name = "#{original_form.name} - Copy"
-
-    # Duplicate associated attributes
-    original_form.form_attributes.each do |attribute|
-      duplicated_attribute = attribute.dup
-      duplicated_attribute.assign_attributes(attribute.attributes.except("id", "created_at", "updated_at", "form_id"))
-      duplicated_form.form_attributes << duplicated_attribute
-    end
-
-    if duplicated_form.save
-      # Redirect to the edit page of the duplicated form in a new window
-      redirect_to edit_form_path(duplicated_form), notice: "Form was successfully duplicated."
+    if result.success?
+      redirect_to edit_form_path(result.form), notice: "Form was successfully duplicated."
     else
-      redirect_to edit_form_path(original_form), alert: "Failed to duplicate the form."
+      redirect_to edit_form_path(original_form),
+                  alert: "Failed to duplicate the form. #{result.errors&.join(', ')}"
     end
-  end
-
-
-  def upload
-    @form = Form.find(params[:id])
-  end
-
-  def validate_upload
-    if params[:file].present?
-      file = params[:file].path
-
-      begin
-        spreadsheet = Roo::Spreadsheet.open(file)
-        header_row = spreadsheet.row(1)
-
-        if header_row.nil? || header_row.all?(&:blank?)
-          flash[:alert] = "The first row is empty. Please provide column names."
-          redirect_to edit_form_path(params[:id]) and return
-        end
-
-        users_to_create = []
-        (2..spreadsheet.last_row).each do |index|
-          row = spreadsheet.row(index)
-
-          user_data = validate_row(row, index, header_row)
-          return redirect_to edit_form_path(params[:id]) if user_data.nil?
-
-          users_to_create << user_data
-        end
-
-        Student.upsert_all(users_to_create, unique_by: :uin)
-        student_ids = users_to_create.map { |student| Student.find_by(uin: student[:uin])&.id }.compact
-        existing_student_ids = FormResponse.where(form_id: params[:id]).pluck(:student_id)
-        form_responses_to_create = student_ids.reject { |id| existing_student_ids.include?(id) }.map do |student_id|
-          {
-            student_id: student_id,
-            form_id: params[:id],
-            responses: {}.to_json
-          }
-        end
-        FormResponse.insert_all(form_responses_to_create) if form_responses_to_create.any?
-        flash[:notice] = "All validations passed."
-      rescue StandardError => e
-        flash[:alert] = "An error occurred: #{e.message}"
-      end
-    else
-      flash[:alert] = "Please upload a file."
-    end
-
-    redirect_to edit_form_path(params[:id])
   end
 
   # DELETE /forms/1
@@ -163,78 +110,11 @@ class FormsController < ApplicationController
       format.json { head :no_content }
     end
   end
-
-
-  def show_modifications
-    @form = Form.find(params[:id])
-    @modifications = @form.modifications || {}
+  # GET /forms/1/view_teams
+  def view_teams
+    @teams = @form.teams
   end
-
-  # Add a new method for updating deadline from index page
-  def update_deadline
-    if @form.update(deadline_params)
-      # Redirect to the index page with success notice
-      redirect_to user_path(@form.user), notice: "Deadline was successfully updated."
-    else
-      redirect_to user_path(@form.user), alert: "Failed to update the deadline."
-    end
-  end
-
-  # POST /forms/1/publish
-  def publish
-    if @form.can_publish?
-      publish_form
-    else
-      handle_publish_error
-    end
-  end
-
-  # POST /forms/1/close
-  def close
-    if @form.update(published: false)
-      redirect_to @form, notice: "Form was successfully closed."
-    else
-      redirect_to @form, alert: "Failed to close the form."
-    end
-  end
-
   private
-    def log_modification(modification_type, details)
-      # Create a mutable copy of @form if it’s frozen
-      form_copy = @form.frozen? ? @form.dup : @form
-
-      # Modify the modifications on the copied object
-      form_copy.modifications ||= {}
-      form_copy.modifications[Time.current] = { type: modification_type, details: details }
-
-      # Save the modifications back
-      form_copy.save
-    end
-
-
-
-
-    def publish_form
-      if @form.update(published: true)
-        redirect_to @form, notice: "Form was successfully published."
-      else
-        redirect_to @form, alert: "Failed to publish the form."
-      end
-    end
-
-    def handle_publish_error
-      reasons = collect_error_reasons
-      flash[:alert] = "Form cannot be published. Reasons: #{reasons.join(', ')}."
-      redirect_to @form
-    end
-
-    def collect_error_reasons
-      reasons = []
-      reasons << "no attributes" unless @form.has_attributes?
-      reasons << "no associated students" unless @form.has_associated_students?
-      reasons
-    end
-
     # Sets @form instance variable based on the id parameter
     # Only finds forms belonging to the current user for security
     def set_form
@@ -249,10 +129,6 @@ class FormsController < ApplicationController
       # If :form key is missing, permit name and description directly from params
       # This allows for more flexible parameter handling
       params.permit(:name, :description, :deadline)
-    end
-
-    def deadline_params
-      params.require(:form).permit(:deadline)
     end
 
     def calculate_teams
@@ -299,5 +175,65 @@ class FormsController < ApplicationController
       # Return the complete team distribution hash
       # This hash contains the team distribution data for all sections
       team_distribution
+    end
+    # def populate_teams_based_on_gender(team_distribution)
+    #   # Dummy function: Just return the input for now
+    #   team_distribution.each do |section, details|
+    #     details[:teams] = Array.new(details[:total_teams]) { [] }
+    #     details[:remaining_students] = details[:form_responses].map(&:student)
+    #   end
+    #   team_distribution
+    # end
+
+    def optimize_teams_based_on_ethnicity(team_distribution)
+      # Dummy function: Just return the input for now
+      team_distribution
+    end
+
+    def distribute_remaining_students(team_distribution)
+      # Dummy function: Distribute remaining students randomly
+      team_distribution
+    end
+
+    def optimize_team_by_swaps(team_distribution)
+      # Dummy function: Just return the input for now
+      team_distribution
+    end
+    def format_team_members(team_members_ids)
+      return [] if team_members_ids.blank?
+
+      students = Student.where(id: team_members_ids)
+      formatted_members = students.map do |student|
+        {
+          id: student.id,
+          name: student.name,
+          uin: student.uin,
+          email: student.email
+        }
+      end
+
+      formatted_members.presence || []
+    end
+
+    # Helper method to calculate the weighted average score for a student
+    def calculate_weighted_average(response)
+      excluded_attrs = [ "gender", "ethnicity" ]
+      attributes = response.form.form_attributes.reject { |attr| excluded_attrs.include?(attr.name.downcase) }
+
+      total_score = 0.0
+      total_weight = 0.0
+
+      attributes.each do |attribute|
+        weightage = attribute.weightage
+        student_response = response.responses[attribute.id.to_s]  # Convert id to string
+
+        if student_response.present?
+          score = student_response.to_f
+          total_score += score * weightage
+          total_weight += weightage
+        end
+      end
+      # Return the weighted average score
+      total_weight > 0 ? (total_score / total_weight) : 0
     end
 end

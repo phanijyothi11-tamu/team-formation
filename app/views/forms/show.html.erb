@@ -1,5 +1,15 @@
 <%= render @form %>
 
+<%# Add deadline display %>
+<div class="form-deadline">
+  <strong>Deadline:</strong>
+  <% if @form.deadline %>
+    <%= format_deadline(@form.deadline).html_safe %>
+  <% else %>
+    No deadline set
+  <% end %>
+</div>
+
 <% @form.form_attributes.each do |attribute| %>
   <div class="form-group">
     <!-- Display the attribute label -->
@@ -28,8 +38,6 @@
   <br>
 <% end %>
 
-
-
 <div class="mt-3">
   <div class="d-flex justify-content-start">
     <% if !@form.published? %>
@@ -37,6 +45,13 @@
       <%= button_to "Publish Form", publish_form_path(@form), method: :post, class: "btn btn-primary me-2", data: { confirm: "Are you sure you want to publish this form?" } %>
     <% else %>
       <%= button_to "Close Form", close_form_path(@form), method: :post, class: "btn btn-danger me-2", data: { confirm: "Are you sure you want to close this form? Students will no longer be able to access it." } %>
+      <div class="mt-4">
+      <%= button_to "Generate Teams", 
+                    generate_teams_form_path(@form), 
+                    method: :post,
+                    class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
+                    data: { confirm: "This will replace any existing teams. Are you sure?" } %>
+        </div>
     <% end %>
     
     <%= button_to "Back to Forms", user_path(current_user), method: :get, class: "btn btn-secondary me-2" %>
