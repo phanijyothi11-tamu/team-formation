@@ -50,6 +50,7 @@ class FormsController < ApplicationController
 
     if @form.save
       # Redirect to edit page to add attributes after successful creation
+      log_modification("Create", "Form #{@form.name} was created.")
       redirect_to edit_form_path(@form), notice: "Form was successfully created. You can now add attributes."
     else
       # If save fails, set error message and re-render the new form
@@ -66,6 +67,7 @@ class FormsController < ApplicationController
 
     if @form.update(update_params.permit(:name, :description, :deadline))
       # If update succeeds, set success message and redirect to the form
+      log_modification("Update", "Form #{@form.name} was updated.")
       flash[:notice] = "Form was successfully updated."
       redirect_to @form
     else
@@ -98,10 +100,12 @@ class FormsController < ApplicationController
   # DELETE /forms/1
   # Deletes a specific form
   def destroy
-    @form.destroy!
+    @form = Form.find(params[:id]) # Retrieve the form first
 
+    @form.destroy! # Use destroy! to raise an error if destruction fails
+
+    log_modification("Destroy", "Form #{@form.id} was destroyed.")
     respond_to do |format|
-      # Redirect to user's show page after successful deletion
       format.html { redirect_to user_path(current_user), status: :see_other, notice: "Form was successfully destroyed." }
       format.json { head :no_content }
     end
