@@ -551,8 +551,8 @@ end
 
     remaining_students = []
     (minorities + majorities).each do |ethnicity|
-      remaining_students.concat(categorized_students[ethnicity]["female"])
       remaining_students.concat(categorized_students[ethnicity]["male"])
+      remaining_students.concat(categorized_students[ethnicity]["female"])
     end
 
     remaining_students.sort_by! { |student| -student[:score] }
