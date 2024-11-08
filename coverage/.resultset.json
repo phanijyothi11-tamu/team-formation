@@ -1,7 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/home/phanijyothi11/team-formation-9/app/controllers/application_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/application_controller.rb": {
         "lines": [
           null,
           null,
@@ -42,7 +42,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/attributes_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/attributes_controller.rb": {
         "lines": [
           null,
           1,
@@ -57,6 +57,7 @@
           10,
           null,
           10,
+          6,
           6,
           null,
           4,
@@ -76,6 +77,7 @@
           null,
           1,
           4,
+          3,
           null,
           3,
           null,
@@ -85,6 +87,27 @@
           null,
           null,
           1,
+          null,
+          1,
+          13,
+          null,
+          null,
+          12,
+          12,
+          null,
+          null,
+          null,
+          12,
+          null,
+          null,
+          null,
+          null,
+          null,
+          12,
+          null,
+          null,
+          12,
+          12,
           null,
           null,
           null,
@@ -152,6 +175,7 @@
           1,
           4,
           4,
+          3,
           null,
           null,
           null,
@@ -196,7 +220,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_publishing.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/form_publishing.rb": {
         "lines": [
           1,
           1,
@@ -242,7 +266,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/form_responses_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/form_responses_controller.rb": {
         "lines": [
           null,
           1,
@@ -388,7 +412,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/forms_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/forms_controller.rb": {
         "lines": [
           null,
           null,
@@ -441,6 +465,7 @@
           8,
           null,
           8,
+          4,
           null,
           4,
           null,
@@ -460,49 +485,68 @@
           null,
           4,
           4,
-          null,
-          null,
-          2,
-          2,
-          null,
-          null,
-          null,
-          null,
-          1,
-          1,
-          1,
-          null,
-          null,
-          null,
-          null,
-          1,
-          2,
-          2,
-          null,
-          2,
-          1,
-          null,
-          1,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          1,
-          2,
-          null,
-          2,
-          null,
           4,
+          null,
+          null,
+          2,
           2,
           null,
+          null,
+          null,
+          null,
+          1,
+          1,
+          1,
+          null,
+          null,
+          null,
+          null,
+          1,
+          2,
+          2,
+          null,
+          2,
+          1,
+          null,
+          1,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          2,
+          null,
+          2,
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
           null,
           null,
           1,
           0,
           null,
           1,
+          null,
+          1,
+          10,
+          null,
+          null,
+          8,
+          8,
+          8,
+          null,
+          null,
+          8,
+          null,
           null,
           null,
           1,
@@ -627,7 +671,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_deadline_management.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/form_deadline_management.rb": {
         "lines": [
           1,
           1,
@@ -648,7 +692,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/form_uploading.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/form_uploading.rb": {
         "lines": [
           1,
           1,
@@ -724,7 +768,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/populate_teams_based_on_gender.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/populate_teams_based_on_gender.rb": {
         "lines": [
           1,
           1,
@@ -909,7 +953,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/generate_teams.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/generate_teams.rb": {
         "lines": [
           1,
           1,
@@ -961,7 +1005,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/concerns/export_teams.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/concerns/export_teams.rb": {
         "lines": [
           1,
           1,
@@ -1003,7 +1047,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/sessions_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
           1,
@@ -1034,7 +1078,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/students_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/students_controller.rb": {
         "lines": [
           1,
           1,
@@ -1085,7 +1129,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/users_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/users_controller.rb": {
         "lines": [
           null,
           null,
@@ -1101,7 +1145,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/controllers/welcome_controller.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/controllers/welcome_controller.rb": {
         "lines": [
           1,
           1,
@@ -1121,7 +1165,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/jobs/check_form_deadlines_job.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/jobs/check_form_deadlines_job.rb": {
         "lines": [
           1,
           1,
@@ -1134,7 +1178,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/attribute.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/attribute.rb": {
         "lines": [
           null,
           1,
@@ -1192,14 +1236,14 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/application_record.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/application_record.rb": {
         "lines": [
           1,
           1,
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/form.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/form.rb": {
         "lines": [
           null,
           null,
@@ -1255,14 +1299,14 @@
           1,
           null,
           1,
-          209,
+          254,
           3,
           null,
           null,
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/services/forms/duplication_service.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/services/forms/duplication_service.rb": {
         "lines": [
           1,
           1,
@@ -1305,7 +1349,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/services/forms/base_service.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/services/forms/base_service.rb": {
         "lines": [
           1,
           null,
@@ -1328,7 +1372,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/user.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/user.rb": {
         "lines": [
           1,
           1,
@@ -1336,19 +1380,7 @@
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/student.rb": {
-        "lines": [
-          1,
-          1,
-          1,
-          null,
-          1,
-          1,
-          1,
-          null
-        ]
-      },
-      "/home/phanijyothi11/team-formation-9/app/models/form_response.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/student.rb": {
         "lines": [
           1,
           1,
@@ -1357,12 +1389,24 @@
           1,
           1,
           1,
+          null
+        ]
+      },
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/form_response.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          1,
           null,
           1,
           null
         ]
       },
-      "/home/phanijyothi11/team-formation-9/app/models/team.rb": {
+      "/Users/rajakarthikvobugari/Documents/softwareeng/tf/team-formation/app/models/team.rb": {
         "lines": [
           1,
           1,
@@ -1402,7 +1446,7 @@
         ]
       }
     },
-    "timestamp": 1730517348
+    "timestamp": 1731055097
   },
   "Cucumber": {
     "coverage": {

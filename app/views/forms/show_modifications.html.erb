@@ -1,0 +1,20 @@
+<h1>Modifications for Form: <%= @form.name %></h1>
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Modification Type</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @modifications.each do |timestamp, modification| %>
+  <tr>
+    <td><%= DateTime.parse(timestamp).strftime("%Y-%m-%d %H:%M:%S") %></td>
+    <td><%= modification["type"] %></td>
+    <td><%= modification["details"] %></td>
+  </tr>
+<% end %>
+  </tbody>
+</table>
+<%= link_to 'Back', form_path(@form) %>

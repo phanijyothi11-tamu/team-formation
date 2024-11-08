@@ -11,6 +11,7 @@ class AttributesController < ApplicationController
         @attribute = build_attribute
 
         if @attribute.save
+            log_modification("created", @attribute)
             redirect_to_form_with_notice("Attribute was successfully added.")
         else
             redirect_to_form_with_alert("Failed to add attribute.")
@@ -30,6 +31,7 @@ class AttributesController < ApplicationController
     # Removes an attribute from a specific form
     def destroy
         if @attribute.destroy
+            log_modification("removed", @attribute)
             # If destruction is successful, redirect to the form's edit page with a success notice
             redirect_to edit_form_path(@form), notice: "Attribute was successfully removed."
         else
@@ -40,6 +42,27 @@ class AttributesController < ApplicationController
 
     private
 
+    def log_modification(action, attribute)
+        @form = Form.find(params[:form_id])
+
+        # Initialize `modifications` as a new hash if it’s nil or frozen.
+        modifications = @form.modifications || {}
+        modifications = modifications.dup if modifications.frozen?
+
+        # Define modification details with a timestamp.
+        modification_details = {
+          type: action,
+          details: "Attribute '#{attribute.name}' (ID: #{attribute.id})",
+          timestamp: Time.current
+        }
+
+        # Add the new modification to the hash
+        modifications[Time.current.to_s] = modification_details
+
+        # Assign the modifications back to the form and save it.
+        @form.modifications = modifications
+        @form.save
+    end
     # This method finds the parent Form for the nested Attribute
     # It's called by the before_action at the top of the controller
     def set_form
@@ -105,6 +128,7 @@ class AttributesController < ApplicationController
 
     def update_and_redirect
         if @attribute.update(weightage_params)
+          log_modification("updated weightage", @attribute)
           redirect_to edit_form_path(@form), notice: "Weightage was successfully updated."
         end
     end

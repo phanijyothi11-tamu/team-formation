@@ -11,6 +11,7 @@ RSpec.describe FormsController, type: :controller do
   before do
     session[:user_id] = user.id
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    @form = form
   end
 
   describe "GET #upload" do
