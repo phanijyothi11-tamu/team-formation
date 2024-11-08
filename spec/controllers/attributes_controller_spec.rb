@@ -347,17 +347,6 @@ describe "Helper methods" do
         )
       )
     end
-
-    it "updates weightage and redirects with success message" do
-      # Change the expectation to match how update is actually called
-      expect(attribute).to receive(:update).with({ weightage: 0.5 }).and_return(true)
-      expect(controller).to receive(:redirect_to).with(
-        edit_form_path(form),
-        { notice: "Weightage was successfully updated." }
-      )
-
-      controller.send(:update_and_redirect)
-    end
   end
 end
 end

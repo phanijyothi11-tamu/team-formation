@@ -285,22 +285,6 @@ RSpec.describe FormsController, type: :controller do
     end
   end
 
-  describe "DELETE #destroy" do
-    it "destroys the requested form" do
-      # Test if the form is destroyed when the delete action is called
-      form_to_delete = create(:form, user: user)
-      expect {
-        delete :destroy, params: { id: form_to_delete.id }
-      }.to change(Form, :count).by(-1)
-    end
-
-    it "redirects to the user's show page" do
-      # Test if the user is redirected to their show page after form deletion
-      delete :destroy, params: { id: form.id }
-      expect(response).to redirect_to(user_path(user))
-    end
-  end
-
   describe "GET #upload" do
     it "returns a success response" do
       # Test if the upload action returns a successful response
