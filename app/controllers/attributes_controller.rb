@@ -142,11 +142,7 @@ class AttributesController < ApplicationController
         return nil unless weightage.present?
 
         parsed_value = weightage.to_f.round(1)
-        parsed_value if valid_weightage?(parsed_value)
-    end
-
-    def valid_weightage?(value)
-        value.between?(0.0, 1.0)
+        parsed_value if parsed_value.between?(0.0, 1.0)
     end
 
     def build_attribute

@@ -285,17 +285,6 @@ describe "Helper methods" do
       after do
         AttributesController.send(:private, :valid_weightage?)
       end
-
-      it "accepts values between 0 and 1" do
-        expect(controller.valid_weightage?(0.0)).to be true
-        expect(controller.valid_weightage?(1.0)).to be true
-        expect(controller.valid_weightage?(0.5)).to be true
-      end
-
-      it "rejects values outside 0-1 range" do
-        expect(controller.valid_weightage?(-0.1)).to be false
-        expect(controller.valid_weightage?(1.1)).to be false
-      end
     end
   end
 

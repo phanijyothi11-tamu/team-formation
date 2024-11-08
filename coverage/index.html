@@ -13,7 +13,7 @@
       <img src="./assets/0.13.1/loading.gif" alt="loading"/>
     </div>
     <div id="wrapper" class="hide">
-      <div class="timestamp">Generated <abbr class="timeago" title="2024-11-08T02:44:46-06:00">2024-11-08T02:44:46-06:00</abbr></div>
+      <div class="timestamp">Generated <abbr class="timeago" title="2024-11-08T02:47:50-06:00">2024-11-08T02:47:50-06:00</abbr></div>
       <ul class="group_tabs"></ul>
 
       <div id="content">
@@ -22,14 +22,14 @@
     <span class="group_name">All Files</span>
     (<span class="covered_percent">
       <span class="green">
-  96.56%
+  96.55%
 </span>
 
      </span>
      covered at
      <span class="covered_strength">
        <span class="green">
-         7.12
+         7.08
        </span>
     </span> hits/line
     )
@@ -42,11 +42,11 @@
   </div>
 
   <div class="t-line-summary">
-    <b>639</b> relevant lines,
-    <span class="green"><b>617</b> lines covered</span> and
+    <b>637</b> relevant lines,
+    <span class="green"><b>615</b> lines covered</span> and
     <span class="red"><b>22</b> lines missed. </span>
     (<span class="green">
-  96.56%
+  96.55%
 </span>
 )
   </div>
@@ -83,11 +83,11 @@
           <tr class="t-file">
             <td class="strong t-file__name"><a href="#beb7cfde4e05bfd5543e963341f4e51f427fc1ae" class="src_link" title="app/controllers/attributes_controller.rb">app/controllers/attributes_controller.rb</a></td>
             <td class="green strong cell--number t-file__coverage">100.00 %</td>
-            <td class="cell--number">174</td>
-            <td class="cell--number">75</td>
-            <td class="cell--number">75</td>
+            <td class="cell--number">170</td>
+            <td class="cell--number">73</td>
+            <td class="cell--number">73</td>
             <td class="cell--number">0</td>
-            <td class="cell--number">8.55</td>
+            <td class="cell--number">8.32</td>
             
           </tr>
         
@@ -791,8 +791,8 @@
     
 
     <div class="t-line-summary">
-      <b>75</b> relevant lines.
-      <span class="green"><b>75</b> lines covered</span> and
+      <b>73</b> relevant lines.
+      <span class="green"><b>73</b> lines covered</span> and
       <span class="red"><b>0</b> lines missed.</span>
     </div>
 
@@ -2371,7 +2371,7 @@
 
             
 
-            <code class="ruby">        parsed_value if valid_weightage?(parsed_value)</code>
+            <code class="ruby">        parsed_value if parsed_value.between?(0.0, 1.0)</code>
           </li>
         </div>
       
@@ -2403,56 +2403,12 @@
 
             
 
-            <code class="ruby">    def valid_weightage?(value)</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="32" data-linenumber="149">
-            
-              <span class="hits">32</span>
-            
-
-            
-
-            <code class="ruby">        value.between?(0.0, 1.0)</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="150">
-            
-
-            
-
-            <code class="ruby">    end</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="151">
-            
-
-            
-
-            <code class="ruby"></code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="2" data-linenumber="152">
-            
-              <span class="hits">2</span>
-            
-
-            
-
             <code class="ruby">    def build_attribute</code>
           </li>
         </div>
       
         <div>
-          <li class="covered" data-hits="13" data-linenumber="153">
+          <li class="covered" data-hits="13" data-linenumber="149">
             
               <span class="hits">13</span>
             
@@ -2464,7 +2420,7 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="13" data-linenumber="154">
+          <li class="covered" data-hits="13" data-linenumber="150">
             
               <span class="hits">13</span>
             
@@ -2476,12 +2432,56 @@
         </div>
       
         <div>
-          <li class="never" data-hits="" data-linenumber="155">
+          <li class="never" data-hits="" data-linenumber="151">
             
 
             
 
             <code class="ruby">        end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="152">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="153">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="154">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">    def mcq_field?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="13" data-linenumber="155">
+            
+              <span class="hits">13</span>
+            
+
+            
+
+            <code class="ruby">        params[:attribute][:field_type] == &quot;mcq&quot;</code>
           </li>
         </div>
       
@@ -2513,56 +2513,12 @@
 
             
 
-            <code class="ruby">    def mcq_field?</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="13" data-linenumber="159">
-            
-              <span class="hits">13</span>
-            
-
-            
-
-            <code class="ruby">        params[:attribute][:field_type] == &quot;mcq&quot;</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="160">
-            
-
-            
-
-            <code class="ruby">    end</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="161">
-            
-
-            
-
-            <code class="ruby"></code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="2" data-linenumber="162">
-            
-              <span class="hits">2</span>
-            
-
-            
-
             <code class="ruby">    def set_mcq_options(attribute)</code>
           </li>
         </div>
       
         <div>
-          <li class="covered" data-hits="2" data-linenumber="163">
+          <li class="covered" data-hits="2" data-linenumber="159">
             
               <span class="hits">2</span>
             
@@ -2574,7 +2530,7 @@
         </div>
       
         <div>
-          <li class="covered" data-hits="2" data-linenumber="164">
+          <li class="covered" data-hits="2" data-linenumber="160">
             
               <span class="hits">2</span>
             
@@ -2582,6 +2538,50 @@
             
 
             <code class="ruby">        attribute.options = mcq_options.join(&quot;,&quot;) unless mcq_options.empty?</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="161">
+            
+
+            
+
+            <code class="ruby">    end</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="never" data-hits="" data-linenumber="162">
+            
+
+            
+
+            <code class="ruby"></code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="2" data-linenumber="163">
+            
+              <span class="hits">2</span>
+            
+
+            
+
+            <code class="ruby">    def redirect_to_form_with_notice(message)</code>
+          </li>
+        </div>
+      
+        <div>
+          <li class="covered" data-hits="10" data-linenumber="164">
+            
+              <span class="hits">10</span>
+            
+
+            
+
+            <code class="ruby">        redirect_to edit_form_path(@form), notice: message</code>
           </li>
         </div>
       
@@ -2613,19 +2613,19 @@
 
             
 
-            <code class="ruby">    def redirect_to_form_with_notice(message)</code>
+            <code class="ruby">    def redirect_to_form_with_alert(message)</code>
           </li>
         </div>
       
         <div>
-          <li class="covered" data-hits="10" data-linenumber="168">
+          <li class="covered" data-hits="5" data-linenumber="168">
             
-              <span class="hits">10</span>
-            
-
+              <span class="hits">5</span>
             
 
-            <code class="ruby">        redirect_to edit_form_path(@form), notice: message</code>
+            
+
+            <code class="ruby">        redirect_to edit_form_path(@form), alert: message</code>
           </li>
         </div>
       
@@ -2641,50 +2641,6 @@
       
         <div>
           <li class="never" data-hits="" data-linenumber="170">
-            
-
-            
-
-            <code class="ruby"></code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="2" data-linenumber="171">
-            
-              <span class="hits">2</span>
-            
-
-            
-
-            <code class="ruby">    def redirect_to_form_with_alert(message)</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="covered" data-hits="5" data-linenumber="172">
-            
-              <span class="hits">5</span>
-            
-
-            
-
-            <code class="ruby">        redirect_to edit_form_path(@form), alert: message</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="173">
-            
-
-            
-
-            <code class="ruby">    end</code>
-          </li>
-        </div>
-      
-        <div>
-          <li class="never" data-hits="" data-linenumber="174">
             
 
             
