@@ -49,6 +49,7 @@ class FormsController < ApplicationController
     @form = current_user.forms.build(form_params)
 
     if @form.save
+      log_modification("Create", "Form #{@form.name} was created.")
       # Redirect to edit page to add attributes after successful creation
       redirect_to edit_form_path(@form), notice: "Form was successfully created. You can now add attributes."
     else
@@ -66,6 +67,7 @@ class FormsController < ApplicationController
 
     if @form.update(update_params.permit(:name, :description, :deadline))
       # If update succeeds, set success message and redirect to the form
+      log_modification("Update", "Form #{@form.name} was updated.")
       flash[:notice] = "Form was successfully updated."
       redirect_to @form
     else
@@ -100,17 +102,35 @@ class FormsController < ApplicationController
   def destroy
     @form.destroy!
 
+    log_modification("Destroy", "Form #{@form.id} was destroyed.")
     respond_to do |format|
       # Redirect to user's show page after successful deletion
       format.html { redirect_to user_path(current_user), status: :see_other, notice: "Form was successfully destroyed." }
       format.json { head :no_content }
     end
   end
+
+  def show_modifications
+    @form = Form.find(params[:id])
+    @modifications = @form.modifications || {}
+  end
   # GET /forms/1/view_teams
   def view_teams
     @teams = @form.teams
   end
   private
+
+  def log_modification(modification_type, details)
+    @form.reload # Reloads the object from the database to ensure it's not frozen
+
+    # Prepare and update the modifications as usual
+    modification_details = { Time.current => { type: modification_type, details: details } }
+    @form.modifications ||= {}
+    @form.modifications = @form.modifications.merge(modification_details)
+
+    # Save the form
+    @form.save
+  end
     # Sets @form instance variable based on the id parameter
     # Only finds forms belonging to the current user for security
     def set_form

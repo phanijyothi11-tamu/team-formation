@@ -43,6 +43,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_30_015930) do
     t.datetime "deadline"
     t.integer "user_id", null: false
     t.boolean "published"
+    t.json "modifications"
   end
 
   create_table "students", force: :cascade do |t|

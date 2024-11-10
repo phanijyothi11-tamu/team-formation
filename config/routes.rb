@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Student routes with nested form_responses using `uin` as the primary identifier
   resources :students, param: :uin do
-    resources :form_responses, only: [:index]
+    resources :form_responses, only: [ :index ]
     # This allows us to view all form responses for a specific student
     # GET /students/:uin/form_responses
   end
@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       post "close"
       get "upload", to: "forms#upload", as: :upload
       post "validate_upload", to: "forms#validate_upload"
+      get "modifications", to: "forms#show_modifications", as: :modifications
       post :generate_teams
       get :view_teams
       get :export_teams
@@ -26,13 +27,13 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :form_responses, only: [:index]
+    resources :form_responses, only: [ :index ]
     # This allows us to view all form responses for a specific form
     # GET /forms/:form_id/form_responses
   end
 
   # Standalone form_responses resource for CRUD operations
-  resources :form_responses, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :form_responses, only: [ :index, :show, :new, :create, :edit, :update, :destroy ]
   # This sets up the following routes:
   # GET    /form_responses/:id          - show a specific form response
   # GET    /form_responses/new          - display form for creating a new form response

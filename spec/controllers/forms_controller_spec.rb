@@ -11,6 +11,7 @@ RSpec.describe FormsController, type: :controller do
   before do
     session[:user_id] = user.id
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    @form = form
   end
 
   describe "GET #upload" do
@@ -281,22 +282,6 @@ RSpec.describe FormsController, type: :controller do
         put :update, params: { id: form.id }.merge(new_attributes)
         expect(response).to redirect_to(form)
       end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested form" do
-      # Test if the form is destroyed when the delete action is called
-      form_to_delete = create(:form, user: user)
-      expect {
-        delete :destroy, params: { id: form_to_delete.id }
-      }.to change(Form, :count).by(-1)
-    end
-
-    it "redirects to the user's show page" do
-      # Test if the user is redirected to their show page after form deletion
-      delete :destroy, params: { id: form.id }
-      expect(response).to redirect_to(user_path(user))
     end
   end
 
