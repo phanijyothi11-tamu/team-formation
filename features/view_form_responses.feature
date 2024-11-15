@@ -13,7 +13,7 @@ Feature: View Student Responses
     Given I have created a form that is published
     When I visit my user profile page
     Then I should see "View Responses" for that form
-    And I should not see "Edit" button for that form
+    And I should not see "Edit" for that form
 
   Scenario: Professor views list of student responses
     Given I have already published a form

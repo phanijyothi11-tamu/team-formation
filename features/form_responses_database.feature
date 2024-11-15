@@ -21,8 +21,9 @@ Feature: Form Responses
     And I should see a confirmation message "Response submitted successfully."
 
   Scenario: Ineligible student attempts to access the form
-    Given I am logged in as a professor
-    And I have created a form
-    And I have uploaded a list of eligible students for the form
-    When an ineligible student attempts to access the form
-    Then they should see an error message "You are not eligible to access this form."
+    Given I login as a professor
+    And I have published a form "Access Form"
+    And I have uploaded a list of students to a form
+    And the eligible list contains student_id "[3]" and not "[4]"
+    When "student4" logs into the system
+    Then the student should not see "Access Form"

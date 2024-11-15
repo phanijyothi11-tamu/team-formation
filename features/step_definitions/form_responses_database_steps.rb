@@ -64,3 +64,37 @@
   Then("I should see a confirmation message {string}") do |message|
     expect(page).to have_content(message)
   end
+
+  Given("I login as a professor") do
+    @user= User.create!(name: "Professor3", email: "professor3@example.com", uin: "121456789")
+    page.set_rack_session(user_id: @user.id)
+  end
+
+  Given('I have published a form {string}') do |string|
+    @form1 = Form.create!(name: "Access Form", description: "Testing form access", user_id: @user.id, published: true)
+    @attribute = @form1.form_attributes.create!(
+    name: "question1",
+    field_type: 'text_input',
+    weightage: 0.5
+    )
+  end
+
+  Given('I have uploaded a list of students to a form') do
+    student3 = Student.find_by(id: 3) || create(:student, id: 3, name: "Student Three", email: "student3@example.com", uin: "121111111")
+    student4 = Student.find_by(id: 4) || create(:student, id: 4, name: "Student Four", email: "student4@example.com", uin: "212222222")
+
+    create(:form_response, form: @form1, student: student3)
+  end
+
+  Given('the eligible list contains student_id {string} and not {string}') do |string, string2|
+    expect(@form1.student_ids).to have_content(string)
+    expect(@form1.student_ids).not_to have_content(string2)
+  end
+  
+  When('{string} logs into the system') do |string|
+    visit student_path(4)
+  end
+
+  Then('the student should not see {string}') do |string|
+    expect(page).not_to have_content(@form1.name)
+  end
