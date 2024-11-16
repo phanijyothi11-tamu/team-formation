@@ -155,6 +155,7 @@
 
 <% unless Rails.env.test? %>
   <script>
+    // Toggle visibility of scale and MCQ fields
     function toggleFields(fieldType) {
       var scaleFields = document.getElementById('scale_fields');
       var mcqFields = document.getElementById('mcq_fields');
@@ -163,6 +164,7 @@
       mcqFields.style.display = (fieldType === 'mcq') ? 'block' : 'none';
     }
 
+    // Add MCQ option functionality
     document.getElementById('add_option_button').addEventListener('click', function() {
       var container = document.getElementById('mcq_options_container');
       var optionCount = container.getElementsByClassName('mcq_option').length + 1;
@@ -180,80 +182,77 @@
       container.appendChild(newOptionDiv);
     });
 
-    // Initialize the visibility
+    // Initialize fields visibility
     toggleFields(document.getElementById('attribute_type').value);
 
+    // Preview modal function
     function openPreviewModal() {
       var modal = document.getElementById('previewModal');
-      modal.style.display = "block";  // Show the modal
+      modal.style.display = "block";
     }
 
-function setDeadline() {
-  var deadlinePicker = document.getElementById("deadline_picker");
-  var selectedDeadline = deadlinePicker.value;
-  var formId = <%= @form.id %>;
+    // Deadline management
+    function setDeadline() {
+      var deadlinePicker = document.getElementById("deadline_picker");
+      var selectedDeadline = deadlinePicker.value;
+      var formId = <%= @form.id %>;
 
-  if (selectedDeadline) {
-    fetch(`/forms/${formId}/update_deadline`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({ deadline: selectedDeadline })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        alert(data.error);
+      if (selectedDeadline) {
+        fetch(`/forms/${formId}/update_deadline`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ deadline: selectedDeadline })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            var date = new Date(selectedDeadline);
+            var formattedDate = date.toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }).replace(',', ' at');
+            
+            document.getElementById("display_deadline").innerText = "Deadline saved successfully";
+            
+            setTimeout(() => {
+              document.getElementById("display_deadline").innerText = "";
+            }, 5000);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert("An error occurred while updating the deadline.");
+        });
       } else {
-        // Format the date string manually to avoid timezone conversions
-        var date = new Date(selectedDeadline);
-        var formattedDate = date.toLocaleString('en-US', {
-          year: 'numeric', month: 'long', day: 'numeric',
-          hour: '2-digit', minute: '2-digit', hour12: true
-        }).replace(',', ' at');
+        document.getElementById("display_deadline").innerText = "Please select a deadline.";
         
-        document.getElementById("display_deadline").innerText = "Deadline saved successfully"
-        
-        // Clear the message after 5 seconds
         setTimeout(() => {
           document.getElementById("display_deadline").innerText = "";
         }, 5000);
       }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert("An error occurred while updating the deadline.");
+    }
+
+    // Form submission validation
+    document.getElementById('form_submit_button').addEventListener('click', function(event) {
+      var deadlinePicker = document.getElementById('deadline_picker');
+      var selectedDeadline = new Date(deadlinePicker.value);
+      var now = new Date();
+
+      if (selectedDeadline < now) {
+        alert("The deadline cannot be in the past.");
+        event.preventDefault();
+      } else {
+        setDeadline();
+      }
     });
-  } else {
-    document.getElementById("display_deadline").innerText = "Please select a deadline.";
-    
-    // Clear this message after 5 seconds as well
-    setTimeout(() => {
-      document.getElementById("display_deadline").innerText = "";
-    }, 5000);
-  }
-}
-
-
-
-
-document.getElementById('form_submit_button').addEventListener('click', function(event) {
-  var deadlinePicker = document.getElementById('deadline_picker');
-  var selectedDeadline = new Date(deadlinePicker.value);
-  var now = new Date();
-
-  if (selectedDeadline < now) {
-    alert("The deadline cannot be in the past.");
-    event.preventDefault(); // Prevent form submission
-  } else {
-    // Trigger form submission if the deadline is valid
-    setDeadline();
-  }
-});
-
-
-
   </script>
 <% end %>
