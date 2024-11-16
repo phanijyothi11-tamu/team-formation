@@ -15,10 +15,11 @@
       </thead>
       <tbody>
         <% team.members.each do |member| %>
+          <% student = Student.find_by(id: member["id"]) %>
           <tr>
             <td><%= member["name"] %></td>
-            <td><%= member["uin"] %></td>
-            <td><%= member["email"] %></td>
+            <td><%= student&.uin || 'N/A' %></td>
+            <td><%= student&.email || 'N/A' %></td>
           </tr>
         <% end %>
       </tbody>

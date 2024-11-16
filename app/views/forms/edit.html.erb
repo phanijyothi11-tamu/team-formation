@@ -1,153 +1,156 @@
-<h1>Editing Form</h1>
-
-<%# Display error messages from flash, if any %>
-<% if flash[:alert] %>
-  <div class="alert alert-danger"><%= flash[:alert] %></div>
-<% end %>
-
-<%# Display form errors at the top of the page %>
-<% if @form.errors.any? %>
-  <%# Container for the entire error message block %>
-  <div class="error-container">
-    <%# Icon container for visual emphasis %>
-    <div class="error-icon">
-      <%# Font Awesome exclamation circle icon %>
-      <i class="fas fa-exclamation-circle"></i>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="form-info">
+      <h1 class="greeting">Editing Form: <%= @form.name %></h1>
+      <p class="form-description"><%= truncate(@form.description, length: 100) %></p>
     </div>
-    <%# Container for error messages %>
-    <div class="error-message">
-      <%# Friendly heading for error messages %>
-      <h4>Oops! Please correct the following:</h4>
-      <%# Unordered list of error messages %>
-      <ul>
-        <%# Iterate through each error message %>
-        <% @form.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+    <%= link_to "Back to Forms", user_path(current_user), class: "btn btn-secondary logout-btn" %>
+  </header>
+
+  <main class="dashboard-content">
+    <section class="form-details-section">
+      <div class="section-header">
+        <h2 class="forms-title">Edit Form Details</h2>
+      </div>
+
+      <% if flash[:alert] %>
+        <div class="alert alert-danger"><%= flash[:alert] %></div>
+      <% end %>
+
+      <% if @form.errors.any? %>
+        <div class="error-container">
+          <div class="error-icon">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div class="error-message">
+            <h4>Oops! Please correct the following:</h4>
+            <ul>
+              <% @form.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="form-content">
+        <%= form_with(model: @form, local: true, data: { turbo: false }, class: "edit-form") do |form| %>
+          <div class="form-group">
+            <%= form.label :name %>
+            <%= form.text_field :name, class: 'form-control' %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :description %>
+            <%= form.text_area :description, class: 'form-control' %>
+          </div>
+
+          <div>
+            <div class="form-group-weightage-deadline">
+              <%= form.label :deadline, "Set Deadline", id: "set_deadline" %>
+            </div>
+            <div class="form-group-weightage-deadline">
+              <%= form.datetime_local_field :deadline, id: "deadline_picker", class: 'form-control' %>
+              <button type="button" onclick="setDeadline()" class="btn btn-primary">Save Deadline</button>
+            </div>
+            <p id="display_deadline" class="deadline-display"></p>
+          </div>
+
+          <div class="form-actions">
+            <div class="action-row">
+              <%= form.submit "Save Form", class: "btn btn-primary", id: "form_submit_button" %>
+              <%= button_tag 'Preview Form', type: 'button', class: 'btn btn-info', onclick: "openPreviewModal()" %>
+              <%= button_tag 'Duplicate Form', type: 'button', class: 'btn btn-warning', onclick: "window.open('#{duplicate_form_path(@form)}', '_blank')" %>
+              <%= link_to 'Upload Students', upload_form_path(@form.id), class: 'btn btn-primary' %>
+            </div>
+          </div>
         <% end %>
-      </ul>
-    </div>
-  </div>
-<% end %>
+      </div>
 
-<%# Form for editing the main form details %>
-<%= form_with(model: @form, local: true, data: { turbo: false }) do |form| %>
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name, class: 'form-control' %>
-  </div>
+      <div class="form-attributes">
+        <h2 class="section-title">Current Attributes</h2>
+        <% if @form.form_attributes.any? %>
+          <p class="total-weightage">Total Weightage: <%= @form.form_attributes.sum(:weightage).round(1) %></p>
+          <ul class="attribute-list">
+            <% @form.form_attributes.select(&:persisted?).each do |attribute| %>
+              <li class="attribute-item">
+                <h3 class="attribute-name"><%= attribute.name %> (<%= attribute.field_type %>)</h3>
+                <% if attribute.field_type == 'scale' %>
+                  <p class="scale-info">Min: <%= attribute.min_value %>, Max: <%= attribute.max_value %></p>
+                <% elsif attribute.field_type == 'mcq' %>
+                  <ul class="mcq-options">
+                    <% (attribute.options&.split(',') || []).each_with_index do |option, index| %>
+                      <li>Option <%= index + 1 %>: <%= option %></li>
+                    <% end %>
+                  </ul>
+                <% end %>
+                <div class="weightage-info">
+                  Current Weightage: 
+                  <% if ['gender', 'ethnicity'].include?(attribute.name.downcase) %>
+                    N/A
+                  <% else %>
+                    <%= attribute.weightage.present? ? attribute.weightage : "Not set" %>
+                  <% end %>
+                </div>
+                <% unless ['gender', 'ethnicity'].include?(attribute.name.downcase) %>
+                  <%= form_with(model: attribute, url: update_weightage_form_attribute_path(@form, attribute), method: :patch, local: true, class: "weightage-form") do |f| %>                
+                    <div class="form-group-weightage-deadline">
+                      <%= f.label :weightage, "Update Weightage (0.0 to 1.0)" %>
+                    </div>
+                    <div class="form-group-weightage-deadline">
+                      <%= f.number_field :weightage, step: 0.1, min: 0, max: 1, value: attribute.weightage, class: 'form-control' %>
+                      <%= f.submit "Update Weightage", class: "btn btn-primary" %>
+                    </div>
+                  <% end %>
+                <% end %>
 
-  <div>
-    <%= form.label :description %>
-    <%= form.text_area :description, class: 'form-control' %>
-  </div>
-  
-  <%# Deadline picker field %>
-<div class="field">
-  <%= form.label :deadline, "Set Deadline", id: "set_deadline" %>
-  <%= form.datetime_local_field :deadline, id: "deadline_picker" %>
-  <%# Button to trigger JavaScript to display the selected deadline %>
-  <button type="button" onclick="setDeadline()">Save</button>
+                <%= button_to 'Destroy Attribute', form_attribute_path(@form, attribute), method: :delete, data: { confirm: 'Are you sure you want to remove this question?'}, class: 'btn btn-primary'%>
 
-  <%# Display the selected deadline here dynamically %>
-  <p id="display_deadline"></p>
-</div>
-
-  <%# Action buttons %>
-  <div class="d-flex justify-content-between align-items-center">
-    <%= link_to "Back to Forms", user_path(current_user), class: "btn btn-secondary" %>
-    <%= form.submit "Save Form", class: "btn btn-primary" %>
-    <%= button_tag 'Preview Form', type: 'button', class: 'button', onclick: "openPreviewModal()" %>
-    <%= button_tag 'Duplicate Form', type: 'button', class: 'button', onclick: "window.open('#{duplicate_form_path(@form)}', '_blank')" %>
-   </div>
-<% end %>
-
-<%# Display current attributes of the form %>
-<h2>Current Attributes</h2>
-<% if @form.form_attributes.any? %>
-  <p>Total Weightage: <%= @form.form_attributes.sum(:weightage).round(1) %></p>
-  <ul>
-    <% @form.form_attributes.select(&:persisted?).each do |attribute| %>
-      <li>
-        <%= attribute.name %> (<%= attribute.field_type %>)
-        <% if attribute.field_type == 'scale' %>
-          (Min: <%= attribute.min_value %>, Max: <%= attribute.max_value %>)
-        <% elsif attribute.field_type == 'mcq' %>
-          <ul>
-            <%# Display each option for MCQ questions, handling nil options %>
-            <% (attribute.options&.split(',') || []).each_with_index do |option, index| %>
-              <li>Option <%= index + 1 %>: <%= option %></li>
+              </li>
             <% end %>
           </ul>
+        <% else %>
+          <p class="no-attributes">No attributes added yet.</p>
         <% end %>
-        <%# Display current weightage %>
-        <div>
-          Current Weightage: 
-          <% if ['gender', 'ethnicity'].include?(attribute.name.downcase) %>
-            N/A
-          <% else %>
-            <%= attribute.weightage.present? ? attribute.weightage : "Not set" %>
-          <% end %>
-        </div>
-        <% unless ['gender', 'ethnicity'].include?(attribute.name.downcase) %>
-          <%= form_with(model: attribute, url: update_weightage_form_attribute_path(@form, attribute), method: :patch, local: true) do |f| %>
-            <div>
-              <%= f.label :weightage, "Update Weightage (0.0 to 1.0)" %>
-              <%= f.number_field :weightage, step: 0.1, min: 0, max: 1, value: attribute.weightage %>
-              <%= f.submit "Update Weightage", class: "btn btn-primary" %>
+      </div>
+
+      <div class="add-attribute">
+        <h2 class="section-title">Add Attribute</h2>
+        <%= form_with(model: [@form, @form.form_attributes.build], local: true, class: "add-attribute-form") do |f| %>
+          <div class="form-group">
+            <%= f.label :name, "Attribute Name" %>
+            <%= f.text_field :name, id: "attribute_name", class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= f.label :field_type, "Attribute Type" %>
+            <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { id: "attribute_type", onchange: 'toggleFields(this.value)', class: 'form-control' } %>
+          </div>
+          <div id="scale_fields" class="form-group" style="display: none;">
+            <%= f.label :min_value, "Minimum Value" %>
+            <%= f.number_field :min_value, id: "attribute_min_value", class: 'form-control' %>
+            <%= f.label :max_value, "Maximum Value" %>
+            <%= f.number_field :max_value, id: "attribute_max_value", class: 'form-control' %>
+          </div>
+          <div id="mcq_fields" class="form-group" style="display: none;">
+            <%= f.label :options, "MCQ Options" %>
+            <div id="mcq_options_container">
+              <div class="mcq_option">
+                <input type="text" name="mcq_options[]" placeholder="Option 1" class="form-control" />
+              </div>
+              <div class="mcq_option">
+                <input type="text" name="mcq_options[]" placeholder="Option 2" class="form-control" />
+              </div>
             </div>
-          <% end %>
+            <button type="button" class="btn btn-secondary" id="add_option_button">Add Option</button>
+          </div>
+          <%= f.submit "Save Attribute", id: "save_attribute", class: "btn btn-primary" %>
         <% end %>
-        <%= button_to 'Destroy Attribute', form_attribute_path(@form, attribute), method: :delete, data: { confirm: 'Are you sure you want to remove this question?'}, class: 'btn btn-danger'%>
-      </li>
-      <br>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No attributes added yet.</p>
-<% end %>
-
-<%# Form for adding a new attribute %>
-<h2>Add Attribute</h2>
-<%= form_with(model: [@form, @form.form_attributes.build], local: true) do |f| %>
-  <div>
-    <%= f.label :name, "Attribute Name" %>
-    <%= f.text_field :name, id: "attribute_name" %>
-  </div>
-
-  <div>
-    <%= f.label :field_type, "Attribute Type" %>
-    <%= f.select :field_type, options_for_select([['Text', 'text_input'], ['MCQ', 'mcq'], ['Scale', 'scale']]), {}, { id: "attribute_type", onchange: 'toggleFields(this.value)' } %>
-  </div>
-
-  <%# Additional fields for scale type %>
-  <div id="scale_fields" style="display: block;">
-    <%= f.label :min_value, "Minimum Value" %>
-    <%= f.number_field :min_value, id: "attribute_min_value" %>
-
-    <%= f.label :max_value, "Maximum Value" %>
-    <%= f.number_field :max_value, id: "attribute_max_value" %>
-  </div>
-
-  <div id="mcq_fields" style="display: none;">
-  <%= f.label :options, "MCQ Options" %>
-  <div id="mcq_options_container">
-    <div class="mcq_option">
-      <input type="text" name="mcq_options[]" placeholder="Option 1" class="form-control" />
-    </div>
-    <div class="mcq_option">
-      <input type="text" name="mcq_options[]" placeholder="Option 2" class="form-control" />
-    </div>
-  </div>
-
-  <button type="button" class="btn btn-secondary" id="add_option_button">Add Option</button>
+      </div>
+    </section>
+  </main>
 </div>
 
-  <%= f.submit "Save Attribute", id: "save_attribute" %>
-<% end %>
-
-<%# Include the preview modal from another file %>
 <%= render 'preview' %>
-
 
 
 <%# Add spacing between "Save Attribute" and action buttons %>

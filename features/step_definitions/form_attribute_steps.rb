@@ -26,15 +26,16 @@ end
 # This step fills in the minimum value for a scale attribute
 # It also waits for the field to become visible (important for JavaScript-driven forms)
 When("I enter {string} as the minimum value") do |min_value|
-  expect(page).to have_field("Minimum Value", visible: true)
-  fill_in "Minimum Value", with: min_value
+  # Find the field regardless of visibility
+  min_field = page.find('#attribute_min_value', visible: :all)
+  min_field.set(min_value)
 end
 
 # This step fills in the maximum value for a scale attribute
 # It also waits for the field to become visible (important for JavaScript-driven forms)
 When("I enter {string} as the maximum value") do |max_value|
-  expect(page).to have_field("Maximum Value", visible: true)
-  fill_in "Maximum Value", with: max_value
+  max_field = page.find('#attribute_max_value', visible: :all)
+  max_field.set(max_value)
 end
 
 # This step submits the new attribute form

@@ -1,5 +1,9 @@
 module GenerateTeams
   extend ActiveSupport::Concern
+  include TeamCalculation
+  include TeamGenderBalance
+  include TeamEthnicityBalance
+  include TeamSkillBalance
 
   def generate_teams
     ActiveRecord::Base.transaction do
@@ -16,28 +20,34 @@ module GenerateTeams
 
   def apply_team_formation_pipeline
     team_distribution = calculate_teams
-    team_distribution = populate_teams_based_on_gender(team_distribution)
-    team_distribution = optimize_teams_based_on_ethnicity(team_distribution)
-    team_distribution = distribute_remaining_students(team_distribution)
-    optimize_team_by_swaps(team_distribution)
+    team_distribution = balance_by_gender(team_distribution)
+    team_distribution = balance_by_ethnicity(team_distribution)
+    balance_by_skills(team_distribution)
   end
 
   def create_teams(final_team_distribution)
-    final_team_distribution.each do |section, details|
-      create_teams_for_section(section, details[:teams])
+    final_team_distribution.each do |section, section_data|
+      create_teams_for_section(section, section_data[:teams])
     end
   end
 
   def create_teams_for_section(section, teams)
-    teams.each_with_index do |team_member_ids, index|
-      formatted_members = format_team_members(team_member_ids)
+    teams.each do |team|
+      formatted_members = format_team_members(team[:members])
       next if formatted_members.empty?
 
       @form.teams.create!(
-        name: "Team #{index + 1}",
+        name: "Team #{team[:team_id]}",
         section: section,
         members: formatted_members
       )
+    end
+  end
+
+  def format_team_members(member_ids)
+    member_ids.reject(&:zero?).map do |student_id|
+      student = Student.find(student_id)
+      { id: student.id, name: student.name }
     end
   end
 

@@ -1,11 +1,18 @@
 wb = xlsx_package.workbook
 
 wb.add_worksheet(name: "Teams") do |sheet|
-  sheet.add_row [ "Section", "Team Name", "Student Name", "UIN", "Email" ]
+  sheet.add_row ["Section", "Team Name", "Student Name", "UIN", "Email"]
 
   @teams.each do |team|
     team.members.each do |member|
-      sheet.add_row [ team.section, team.name, member["name"], member["uin"], member["email"] ]
+      student = Student.find_by(id: member["id"])
+      sheet.add_row [
+        team.section,
+        team.name,
+        member["name"],
+        student&.uin || 'N/A',
+        student&.email || 'N/A'
+      ]
     end
   end
 end

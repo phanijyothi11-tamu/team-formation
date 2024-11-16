@@ -1,44 +1,57 @@
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-2xl font-bold mb-6">Teams for <%= @form.name %></h1>
-  
-  <div class="mb-6">
-    <h3 class="text-lg font-semibold mb-2">Export Teams:</h3>
-    <%= form_tag export_teams_form_path(@form), method: :get, class: "flex items-center" do %>
-      <%= select_tag :format, options_for_select([['Excel', :xlsx], ['CSV', :csv], ['PDF', :pdf]]), class: "mr-2 p-2 border rounded" %>
-      <%= submit_tag "Export", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-    <% end %>
-  </div>
-
-  <% @teams.group_by(&:section).each do |section, section_teams| %>
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Section: <%= section %></h2>
-      
-      <div class="overflow-x-auto">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr>
-              <th class="px-4 py-2 border-b bg-gray-200">Name</th>
-              <th class="px-4 py-2 border-b bg-gray-200">UIN</th>
-              <th class="px-4 py-2 border-b bg-gray-200">Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% section_teams.each do |team| %>
-              <% team.members.each do |member| %>
-                <tr>
-                  <td class="px-4 py-2 border-b"><%= member["name"] %></td>
-                  <td class="px-4 py-2 border-b"><%= member["uin"] %></td>
-                  <td class="px-4 py-2 border-b"><%= member["email"] %></td>
-                </tr>
-              <% end %>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="form-info">
+      <h1 class="greeting">Teams for <%= @form.name %></h1>
     </div>
-  <% end %>
+    <%= link_to "Back to Form", form_path(@form), class: "btn btn-secondary logout-btn" %>
+  </header>
 
-  <div class="mt-6">
-    <%= link_to "Back to Form", form_path(@form), class: "text-blue-600 hover:text-blue-800" %>
-  </div>
+  <main class="dashboard-content">
+    <section class="form-details-section">
+      <div class="section-header">
+        <h2 class="forms-title">Export Teams</h2>
+      </div>
+
+      <div class="form-card">
+        <%= form_tag export_teams_form_path(@form), method: :get, class: "export-form" do %>
+          <%= select_tag :format, options_for_select([['Excel', :xlsx], ['CSV', :csv], ['PDF', :pdf]]), class: "form-control" %>
+          <%= submit_tag "Export", class: "btn btn-primary export-btn" %>
+        <% end %>
+      </div>
+
+      <% @teams.group_by(&:section).each do |section, section_teams| %>
+        <div class="section-header">
+          <h2 class="forms-title">Section: <%= section %></h2>
+        </div>
+        
+        <div class="forms-list">
+          <% section_teams.each do |team| %>
+            <div class="form-card">
+              <h3 class="form-name"><%= team.name %></h3>
+              <p class="team-size">Team Size: <%= team.members.size %></p>
+              
+              <table class="form-table">
+                <thead>
+                  <tr class="table-header">
+                    <th>Name</th>
+                    <th>UIN</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% team.members.each do |member| %>
+                    <tr>
+                      <td><%= member['name'] %></td>
+                      <td><%= Student.find_by(id: member['id'])&.uin %></td>
+                      <td><%= Student.find_by(id: member['id'])&.email || 'N/A' %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  </main>
 </div>

@@ -76,7 +76,7 @@
         <% else %>
           <div class="action-row">
             <%= button_to "Close Form", close_form_path(@form), method: :post, class: "btn btn-danger", data: { confirm: "Are you sure you want to close this form? Students will no longer be able to access it." } %>
-            <%= button_to "View Responses", "#", method: :get, class: "btn btn-info" %>
+            <%= button_to "View Responses", form_form_responses_path(@form), method: :get, class: "btn btn-primary" %>
             <%= button_to "Generate Teams", generate_teams_form_path(@form), method: :post, class: "btn btn-primary", data: { confirm: "This will replace any existing teams. Are you sure?" } %>
           </div>
         <% end %>

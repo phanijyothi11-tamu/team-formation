@@ -17,8 +17,8 @@ module TeamGenderBalance
   # Output: Modified team_distribution with balanced gender distribution
   def balance_by_gender(team_distribution)
     team_distribution.each do |section, section_data|
-    # Step 1: Assign female students in pairs
-    assign_female_students(section_data)
+      # Step 1: Assign female students in pairs
+      assign_female_students(section_data)
 
     # Check if there are multiple unassigned females left; if so, stop further assignments
     return team_distribution if multiple_unassigned_females?(section_data)
@@ -37,7 +37,7 @@ module TeamGenderBalance
 
   # Helper methods
   def assign_female_students(section_data)
-    unassigned_females = filter_students(section_data, gender: "female")
+    unassigned_females = filter_students(section_data, { gender: get_gender_option("female") })
     return if unassigned_females.size < 2
 
     assign_pairs_to_teams(section_data, unassigned_females)
@@ -52,7 +52,7 @@ module TeamGenderBalance
 
   # Checks if there are multiple unassigned females left
   def multiple_unassigned_females?(section_data)
-    unassigned_females = filter_students(section_data, gender: "female")
+    unassigned_females = filter_students(section_data, { gender: get_gender_option("female") })
     unassigned_females.size > 1
   end
 
@@ -110,7 +110,7 @@ module TeamGenderBalance
 
 
   def assign_single_female_to_team(section_data)
-    unassigned_females = filter_students(section_data, gender: "female")
+    unassigned_females = filter_students(section_data, { gender: get_gender_option("female") })
     return unless unassigned_females.size == 1
 
     student_id = unassigned_females.first
@@ -124,7 +124,7 @@ module TeamGenderBalance
   end
 
   def assign_others_to_teams(section_data)
-    unassigned_others = filter_students(section_data, gender: "other")
+    unassigned_others = filter_students(section_data, { gender: get_gender_option("other") })
     return if unassigned_others.empty?
 
     # Keep track of teams that have already received an 'other' student
@@ -176,5 +176,22 @@ module TeamGenderBalance
       !teams_with_others.include?(team[:team_id])
     end.sort_by { |team| -team[:capacity] }  # Sort teams by descending capacity
       .first
+  end
+
+  def get_gender_option(option_name)
+    # Find the gender attribute
+    gender_attr = get_gender_attribute
+
+    # Convert options string to an array by splitting on commas and stripping whitespace
+    options = gender_attr.options.split(",").map(&:strip)
+
+    # Find the option matching the given name (case-insensitive)
+    selected_option = options.find { |option| option.downcase == option_name.downcase }
+
+    if selected_option.nil?
+      raise "The 'gender' attribute does not have an option matching '#{option_name}'. Please add '#{option_name}' as an option."
+    end
+
+    selected_option
   end
 end

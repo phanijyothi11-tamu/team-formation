@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+  <div class="dashboard-container">
   <header class="dashboard-header">
     <div class="form-info">
     </div>
@@ -12,20 +12,6 @@
       </div>
 
       <%= form_with(model: @form, local: true, class: "form-content") do |form| %>
-        <% if @form.errors.any? %>
-          <div class="error-container">
-            <div class="error-icon">⚠️</div>
-            <div class="error-message">
-              <h4><%= pluralize(@form.errors.count, "error") %> prohibited this form from being saved:</h4>
-              <ul>
-                <% @form.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        <% end %>
-
         <div class="form-group">
           <%= form.label :name, class: "form-label" %>
           <%= form.text_field :name, class: "form-control" %>

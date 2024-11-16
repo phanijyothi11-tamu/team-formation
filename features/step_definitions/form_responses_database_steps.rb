@@ -90,7 +90,7 @@
     expect(@form1.student_ids).to have_content(string)
     expect(@form1.student_ids).not_to have_content(string2)
   end
-  
+
   When('{string} logs into the system') do |string|
     visit student_path(4)
   end

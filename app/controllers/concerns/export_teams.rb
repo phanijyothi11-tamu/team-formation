@@ -30,7 +30,14 @@ module ExportTeams
 
       teams.each do |team|
         team.members.each do |member|
-          csv << [ team.section, team.name, member["name"], member["uin"], member["email"] ]
+          student = Student.find_by(id: member["id"])
+          csv << [
+            team.section,
+            team.name,
+            member["name"],
+            student&.uin || "N/A",
+            student&.email || "N/A"
+          ]
         end
       end
     end

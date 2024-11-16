@@ -149,6 +149,7 @@ h1, h2, h3 {
 }
 
 .btn {
+  white-space: nowrap;
   padding: 6px 12px;
   border-radius: 5px;
 }
@@ -299,6 +300,20 @@ h1, h2, h3 {
 
 .form-group {
   margin-bottom: 25px;
+  
+}
+
+.form-group-weightage-deadline {
+  display: flex; 
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group-weightage-deadline label{
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #5d0025;
 }
 
 .form-group label {
@@ -314,6 +329,7 @@ h1, h2, h3 {
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 1em;
+  box-sizing: border-box;
 }
 
 .scale-input {
@@ -395,6 +411,7 @@ h1, h2, h3 {
   border-radius: 6px;
   margin-top: 20px;
   font-weight: bold;
+  text-align: center;
 }
 
 .alert-info {
@@ -462,11 +479,13 @@ h1, h2, h3 {
 
 .scale-info, .mcq-options {
   margin-bottom: 15px;
-  color: #6c757d;
+  color: #5d0025;
+  font-size: 1em;
 }
 
 .weightage-info {
   font-weight: bold;
+  color: #5d0025;
   margin-bottom: 10px;
 }
 
@@ -579,4 +598,12 @@ a, a:link, a:visited {
   font-size: 1.4em;
   color: #5d0025;
   margin: 0 0 10px;
+}
+.export-form {
+  display: flex;
+  gap: 10px;
+}
+
+.export-btn {
+  white-space: nowrap;
 }
