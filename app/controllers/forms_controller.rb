@@ -109,13 +109,13 @@ class FormsController < ApplicationController
   # opens new /forms/#new_id/edit
   def duplicate
     original_form = Form.find(params[:id])
-    result = Forms::DuplicationService.call(original_form)
+    result = Forms::DuplicationService.new(original_form).call
 
     if result.success?
       redirect_to edit_form_path(result.form), notice: "Form was successfully duplicated."
     else
       redirect_to edit_form_path(original_form),
-                  alert: "Failed to duplicate the form. #{result.errors&.join(', ')}"
+                  alert: "Failed to duplicate the form: #{result.errors&.join(', ')}."
     end
   end
 

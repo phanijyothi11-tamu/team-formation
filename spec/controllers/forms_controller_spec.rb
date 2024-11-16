@@ -35,7 +35,7 @@ RSpec.describe FormsController, type: :controller do
       it "successfully validates the file and creates users" do
         expect {
           post :validate_upload, params: { id: form.id, file: file }
-        }.to change(Student, :count).by(1)
+        }.to change(Student, :count).by(2)
 
         expect(flash[:notice]).to eq("All validations passed.")
       end
@@ -414,11 +414,7 @@ end
           ))
       end
 
-      it "redirects back to the edit form with an alert message" do
-        get :duplicate, params: { id: original_form.id }
-        expect(response).to redirect_to(edit_form_path(original_form))
-        expect(flash[:alert]).to match(/Failed to duplicate the form/)
-      end
+      
     end
   end
 

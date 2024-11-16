@@ -1,37 +1,39 @@
-<h1>Student Information</h1>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="user-info">
+      <h1 class="greeting">Howdy! <%= @student.name %></h1>
+      <p class="user-email"><strong> Email: </strong><%= @student.email %></p>
+      <p class="user-email"><strong> UIN: </strong><%= @student.uin %></p>
+    </div>
+    <%= link_to "Logout", logout_path, method: :delete, class: "btn btn-danger" %>
+  </header>
 
-<div class="student-info">
-  <p><strong>Name:</strong> <%= @student.name %></p>
-  <p><strong>UIN:</strong> <%= @student.uin %></p>
-  <p><strong>Email:</strong> <%= @student.email %></p>
-  <p><strong>Section:</strong> <%= @student.section %></p>
+  <h2>Available Forms</h2>
+
+  <% if @published_forms.any? %>
+    <ul class="forms-list">
+      <% @published_forms.each do |form| %>
+        <% form_response = @form_responses.find { |fr| fr.form_id == form.id } %>
+        <div class="form-card">
+                <h3 class="form-name"><%= form.name %></h3>
+                <p class="form-description"><strong>Description: </strong><%= truncate(form.description, length: 100) %></p>
+                <div class="form-deadline">
+                  <strong>Deadline: </strong>
+                  <span class="form-deadline">
+                    <% if form.deadline %>
+                      <%= format_deadline(form.deadline).html_safe %>
+                    <% else %>
+                      No deadline set
+                    <% end %>
+                  </span>
+                </div>
+                <div class="form-actions">
+                  <%= link_to "View/Respond to Form", edit_form_response_path(form_response), class: "btn btn-primary" %>
+                </div>
+              </div>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No forms available at this time.</p>
+  <% end %>
 </div>
-
-<h2>Available Forms</h2>
-
-<% if @published_forms.any? %>
-  <ul class="forms-list">
-    <% @published_forms.each do |form| %>
-      <% form_response = @form_responses.find { |fr| fr.form_id == form.id } %>
-      <li>
-        <h3><%= form.name %></h3>
-        <p><%= form.description %></p>
-        <p>
-          <strong>Deadline:</strong>
-          <% if form.deadline %>
-            <span class="deadline">
-              <%= format_deadline(form.deadline).html_safe %>
-            </span>
-          <% else %>
-            No deadline set
-          <% end %>
-        </p>
-        <%= link_to "View/Respond to Form", edit_form_response_path(form_response), class: "btn btn-primary" %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No forms available at this time.</p>
-<% end %>
-
-<%= link_to "Logout", logout_path, method: :delete, class: "btn btn-danger" %>

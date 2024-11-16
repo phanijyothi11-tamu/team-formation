@@ -60,7 +60,7 @@
             <div class="action-row">
               <%= form.submit "Save Form", class: "btn btn-primary", id: "form_submit_button" %>
               <%= button_tag 'Preview Form', type: 'button', class: 'btn btn-info', onclick: "openPreviewModal()" %>
-              <%= button_tag 'Duplicate Form', type: 'button', class: 'btn btn-warning', onclick: "window.open('#{duplicate_form_path(@form)}', '_blank')" %>
+              <%= link_to 'Duplicate Form', duplicate_form_path(@form), method: :post, class: 'btn btn-primary' %>
               <%= link_to 'Upload Students', upload_form_path(@form.id), class: 'btn btn-primary' %>
             </div>
           </div>

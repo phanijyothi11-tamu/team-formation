@@ -19,7 +19,16 @@ module Forms
     private
 
     def generate_copy_name
-      "#{@original_form.name} - Copy"
+      base_name = "Copy of #{@original_form.name}"
+      unique_name = base_name
+      counter = 1
+
+      while Form.exists?(name: unique_name)
+        unique_name = "#{base_name} (#{counter})"
+        counter += 1
+      end
+
+      unique_name
     end
 
     def duplicate_attributes(new_form)

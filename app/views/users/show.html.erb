@@ -1,7 +1,7 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
     <div class="user-info">
-      <h1 class="greeting">Howdy! <%= @current_user.name %></h1>
+      <h1 class="greeting">Howdy! Professor <%= @current_user.name %></h1>
       <p class="user-email"><%= @current_user.email %></p>
     </div>
     <%= link_to "Logout", logout_path, class: "btn btn-secondary logout-btn" %>

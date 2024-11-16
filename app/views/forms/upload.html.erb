@@ -1,6 +1,21 @@
-<%= form_with url: validate_upload_form_path(@form.id), local: true, multipart: true do |form| %>
-  <%= form.file_field :file %>
-  <%= form.submit "Upload Students", id: "upload_button" %>
-<% end %>
-<%= button_to "back to form", form_path(@form.id), method: :get, class: "btn btn-sm btn-info" %>
-<%= button_to "Download Sample CSV", download_sample_form_path(@form), method: :get, class: "btn btn-sm btn-info" %>
+<div class="form-container">
+  <h1 class="form-title">Upload Students</h1>
+
+  <%# Form for uploading students %>
+  <%= form_with url: validate_upload_form_path(@form.id), local: true, multipart: true, class: "upload-form" do |form| %>
+    <div class="form-group">
+      <%= form.label :file, "Choose a file to upload", class: "form-label" %>
+      <%= form.file_field :file, class: "form-control" %>
+    </div>
+
+    <div class="form-actions btn-group">
+      <%= form.submit "Upload Students", id: "upload_button", class: "btn btn-primary btn-uniform" %>
+    </div>
+  <% end %>
+
+  <%# Action buttons for navigation and sample file download %>
+  <div class="form-actions btn-group">
+    <%= button_to "Back to Form", form_path(@form.id), method: :get, class: "btn btn-secondary btn-uniform" %>
+    <%= button_to "Download Sample CSV", download_sample_form_path(@form), method: :get, class: "btn btn-info btn-uniform" %>
+  </div>
+</div>

@@ -9,7 +9,7 @@ RSpec.describe Forms::DuplicationService do
       result = described_class.call(original_form)
 
       expect(result.success?).to be true
-      expect(result.form.name).to eq("Original Form - Copy")
+      expect(result.form.name).to eq("Copy of Original Form")
       expect(result.form.user).to eq(user)
     end
 
@@ -41,7 +41,7 @@ RSpec.describe Forms::DuplicationService do
             save: false,
             errors: errors,
             dup: original_form.dup,
-            name: "Original Form - Copy",
+            name: "Copy of Original Form",
             "name=": nil,
             form_attributes: [],
             "form_attributes=": nil

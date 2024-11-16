@@ -1,50 +1,77 @@
-<h1>Submit Response for <%= @form.name %></h1>
+<div class="form-container">
+  <h1 class="form-title">Submit Response for <%= @form.name %></h1>
 
-<%= form_with(model: [@form, @student, @form_response], url: form_response_path(@form_response), method: :patch, local: true) do |f| %>
-  <% if @form_response.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@form_response.errors.count, "error") %> prohibited this form from being saved:</h2>
-      <ul>
-        <% @form_response.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= form_with(model: [@form, @student, @form_response], 
+                url: form_response_path(@form_response), 
+                method: :patch, 
+                local: true, 
+                class: "edit-form") do |f| %>
 
-  <% @form.form_attributes.each do |attribute| %>
-    <div>
-      <%= label_tag "form_response_responses_#{attribute.id}", attribute.name %>
+    <% if @form_response.errors.any? %>
+      <div id="error_explanation" class="error-container">
+        <h2 class="error-message">
+          <%= pluralize(@form_response.errors.count, "error") %> prohibited this form from being saved:
+        </h2>
+        <ul>
+          <% @form_response.errors.full_messages.each do |message| %>
+            <li class="error-message"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-      <% case attribute.field_type %>
-      <% when 'text_input' %>
-        <%= text_field_tag "form_response[responses][#{attribute.id}]", 
-              @form_response.responses[attribute.id.to_s].presence || '', 
-              required: false %> <!-- Set required to false for drafts -->
-      <% when 'mcq' %>
-        <% if attribute.options.present? %>
-          <%= select_tag "form_response[responses][#{attribute.id}]", 
-                options_for_select(attribute.options.split(','), @form_response.responses[attribute.id.to_s]), 
-                prompt: 'Select an option', required: false %>
+    <% @form.form_attributes.each do |attribute| %>
+      <div class="form-group">
+        <%= label_tag "form_response_responses_#{attribute.id}", 
+                      attribute.name, 
+                      class: "form-label" %>
+
+        <% case attribute.field_type %>
+        <% when 'text_input' %>
+          <%= text_field_tag "form_response[responses][#{attribute.id}]", 
+                @form_response.responses[attribute.id.to_s].presence || '', 
+                class: "form-control", 
+                required: false %>
+        <% when 'mcq' %>
+          <% if attribute.options.present? %>
+            <%= select_tag "form_response[responses][#{attribute.id}]", 
+                  options_for_select(attribute.options.split(','), @form_response.responses[attribute.id.to_s]), 
+                  prompt: 'Select an option', 
+                  class: "form-control", 
+                  required: false %>
+          <% else %>
+            <p class="unknown-field">No options available for this field.</p>
+          <% end %>
+        <% when 'scale' %>
+          <div class="scale-input">
+            <%= number_field_tag "form_response[responses][#{attribute.id}]", 
+                  @form_response.responses[attribute.id.to_s].presence || '', 
+                  class: "form-control", 
+                  min: attribute.min_value, 
+                  max: attribute.max_value, 
+                  required: false %>
+            <small>Enter a value between <%= attribute.min_value %> and <%= attribute.max_value %>.</small>
+          </div>
         <% else %>
-          <p>No options available for this field.</p>
+          <%= text_field_tag "form_response[responses][#{attribute.id}]", 
+                @form_response.responses[attribute.id.to_s].presence || '', 
+                class: "form-control", 
+                required: false %>
         <% end %>
-      <% when 'scale' %>
-        <%= number_field_tag "form_response[responses][#{attribute.id}]", 
-              @form_response.responses[attribute.id.to_s].presence || '', 
-              min: attribute.min_value, max: attribute.max_value, required: false %>
-      <% else %>
-        <%= text_field_tag "form_response[responses][#{attribute.id}]", 
-              @form_response.responses[attribute.id.to_s].presence || '', 
-              required: false %>
-      <% end %>
-    </div>
-    <br>
-  <% end %>
+      </div>
+    <% end %>
 
-  <!-- Back Button -->
-  <%= link_to 'Back', student_path(@student), class: 'btn btn-secondary' %>
-  <!-- Submit Buttons -->
-  <%= button_tag 'Submit Response', type: 'submit', id: 'submit_response_button' %>
-  <%= button_tag 'Save as Draft', name: 'commit', value: 'Save as Draft', type: 'submit' %>
-<% end %>
+    <div class="form-actions">
+      <%= link_to 'Back', student_path(@student), class: 'btn btn-secondary' %>
+      <%= button_tag 'Submit Response', 
+                     type: 'submit', 
+                     id: 'submit_response_button', 
+                     class: 'btn btn-primary' %>
+      <%= button_tag 'Save as Draft', 
+                     name: 'commit', 
+                     value: 'Save as Draft', 
+                     type: 'submit', 
+                     class: 'btn btn-warning' %>
+    </div>
+  <% end %>
+</div>

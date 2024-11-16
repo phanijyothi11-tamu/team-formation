@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       patch "update_deadline"
       post "publish"
       post "close"
+      post 'duplicate'
       get "upload", to: "forms#upload", as: :upload
       post "validate_upload", to: "forms#validate_upload"
       post :generate_teams
