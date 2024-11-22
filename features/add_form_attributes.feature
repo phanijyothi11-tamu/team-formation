@@ -41,3 +41,4 @@ Scenario: Attempt to update weightage exceeding total of 1
   And I enter "0.7" as the new weightage for "Team Leadership"
   And I update the weightage
   Then I should see an error message about exceeding total weightage
+  
